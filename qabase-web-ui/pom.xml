@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <parent>
+        <groupId>com.toob.qabase</groupId>
+        <artifactId>qabase-framework</artifactId>
+        <version>1.0.2</version>
+    </parent>
+
+
+    <artifactId>qabase-web-ui</artifactId>
+    <name>QaBase Web UI [JAR]</name>
+    <packaging>jar</packaging>
+
+
+    <dependencies>
+
+        <!-- SELENIDE -->
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>selenide</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-selenide</artifactId>
+        </dependency>
+
+        <!-- APACHE COMMONS UTILS -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+        </dependency>
+
+        <!-- QA BASE Custom Libraries -->
+        <dependency>
+            <groupId>com.toob.qabase</groupId>
+            <artifactId>qabase-core</artifactId>
+        </dependency>
+    </dependencies>
+</project>

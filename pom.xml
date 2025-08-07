@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.toob.qabase</groupId>
+    <artifactId>qabase-framework</artifactId>
+    <version>1.0.2</version>
+    <packaging>pom</packaging>
+    <name>QABase Framework [POM]</name>
+    <description>Framework for JVM Automation testing.</description>
+
+
+    <modules>
+        <module>qabase-core</module>
+        <module>qabase-rest</module>
+        <module>qabase-web-ui</module>
+    </modules>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <kotlin.version>2.1.20</kotlin.version>
+        <java.version>21</java.version>
+        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+        <spring-boot.version>3.5.4</spring-boot.version>
+        <jackson-databind.version>2.18.3</jackson-databind.version>
+
+        <rest-assured.version>5.5.0</rest-assured.version>
+        <kotlinx-serialization-json.version>1.8.0</kotlinx-serialization-json.version>
+        <allure.version>2.29.0</allure.version>
+        <aspectj.version>1.9.22.1</aspectj.version>
+        <selenide.version>7.6.1</selenide.version>
+
+        <apache-commons-lang.version>3.17.0</apache-commons-lang.version>
+        <apache-commons-collection.version>4.5.0-M2</apache-commons-collection.version>
+        <apache-commons-text.version>1.12.0</apache-commons-text.version>
+        <apache-commons-compression.version>1.27.1</apache-commons-compression.version>
+
+        <kotlin-logger-jvm-slf4j.version>7.0.7</kotlin-logger-jvm-slf4j.version>
+
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
+        <byte-buddy-agent.version>1.17.5</byte-buddy-agent.version>
+        <maven-ant-run.version>3.1.0</maven-ant-run.version>
+        <allure-maven.version>2.15.2</allure-maven.version>
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>1.0.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- JACKSON DATABIND -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+            <!-- APACHE COMMONS UTILS -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+            <!-- ALLURE -->
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-junit5</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+            <!-- REST Assured -->
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-serialization-json-jvm</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+            <!-- SELENIDE -->
+            <dependency>
+                <groupId>com.codeborne</groupId>
+                <artifactId>selenide</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-selenide</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+            <!-- Kotlin Logging ( Kotlin wrapper for SLF4J ) -->
+            <dependency>
+                <groupId>io.github.oshai</groupId>
+                <artifactId>kotlin-logging-jvm</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+            <!-- MOCKITO Inline Warning Agent -->
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+            <!-- QA BASE Custom Libraries -->
+            <dependency>
+                <groupId>com.toob.qabase</groupId>
+                <artifactId>qabase-core</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.toob.qabase</groupId>
+                <artifactId>qabase-rest</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.toob.qabase</groupId>
+                <artifactId>qabase-web-ui</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <dependencies>
+
+        <!-- SPRING BOOT & FRAMEWORK STUFF -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+
+        <!-- KOTLIN -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <!-- ALLURE -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+
+        <!--
+        Configures the build settings for the Framework Project.
+        It tells maven that :
+            •	Main source code is located in src/main/kotlin (instead of the default src/main/java).
+            •	Test source code is located in src/test/kotlin.
+        -->
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.0.2</version>
+            </plugin>
+
+
+            <!--
+            This plugin ensures Kotlin code is compiled correctly during the build process.
+                •	Compiles Kotlin code for both main and test phases.
+                •	Targets JVM 21 (since we specified <java.version>21</java.version>).
+            -->
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <jvmTarget>${java.version}</jvmTarget>
+                            <compilerPlugins>
+                                <plugin>spring</plugin>
+                                <plugin>all-open</plugin>
+                            </compilerPlugins>
+                            <pluginOptions>
+                                <option>all-open:annotation=org.springframework.stereotype.Component</option>
+                                <option>all-open:annotation=org.springframework.boot.test.context.SpringBootTest</option>
+                                <option>all-open:annotation=com.toob.qabase.QaBaseTest</option>
+                                <option>all-open:annotation=com.toob.qabase.QaBaseAutomationModule</option>
+                                <option>all-open:annotation=io.qameta.allure.Step</option>
+                            </pluginOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <jvmTarget>${java.version}</jvmTarget>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <args>
+                        <arg>-Xjsr305=strict</arg>
+                    </args>
+
+                    <!--
+                    Enables Kotlin compiler plugins:
+                        •	spring – Enables Spring support in Kotlin.
+                        •	kotlinx-serialization – Enables JSON serialization support in Kotlin.
+                    -->
+                    <compilerPlugins>
+                        <plugin>spring</plugin>
+                        <plugin>kotlinx-serialization</plugin>
+                    </compilerPlugins>
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>1.0.2</version>
+                        </annotationProcessorPath>
+                    </annotationProcessorPaths>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-allopen</artifactId>
+                        <version>1.0.2</version>
+                    </dependency>
+                    <!-- Add this dependency for serialization -->
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-serialization</artifactId>
+                        <version>1.0.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!--
+            Maven Compiler Plugin
+                •	Compiles Java/Kotlin code with Java 21.
+                •	Configures Spring Boot’s annotation processor for configuration properties.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>1.0.2</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>1.0.2</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!--
+            Maven Surefire Plugin with Allure
+                •	Enables AspectJ weaving (needed for AOP or libraries like Selenide).
+                •	Configures Allure for reporting test results.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>1.0.2</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+
+                        <!-- Mockito is currently self-attaching to enable the inline-mock-maker.
+                            This will no longer work in future releases of the JDK.
+                            Please add Mockito as an agent to your build what is described in Mockito's documentation
+                        -->
+                        -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
+                    </argLine>
+                    <useModulePath>false</useModulePath>
+                    <printSummary>true</printSummary>
+                    <reportFormat>brief</reportFormat>
+                    <systemProperties>
+                        <property>
+                            <name>allure.results.directory</name>
+                            <value>${project.build.directory}/allure-results</value>
+                        </property>
+                        <!-- Enable Selenide Headless Mode -->
+                        <property>
+                            <name>selenide.headless</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>1.0.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.bytebuddy</groupId>
+                        <artifactId>byte-buddy-agent</artifactId>
+                        <version>1.0.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Failsafe for integration tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+            Allure Reporting Maven Plugin
+                •	Generates Allure test reports from test execution data.
+            -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>1.0.2</version>
+                <configuration>
+                    <reportVersion>${allure.version}</reportVersion>
+                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
+                    <reportDirectory>${project.build.directory}/allure-reports</reportDirectory>
+                </configuration>
+            </plugin>
+
+            <!--
+            Maven Ant Run Plugin
+                • Creates Required Directories for Allure Reports
+                • Ensures Allure directories exist before running tests.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <id>create-allure-results-directory</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/allure-results"/>
+                                <mkdir dir="${project.build.directory}/allure-reports"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
