@@ -27,7 +27,7 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
-        <!-- Kotlin Logging ( Kotlin wrapper for SLF4J ) -->
+        <!-- KOTLIN LOGGING ( Kotlin wrapper for SLF4J ) -->
         <dependency>
             <groupId>io.github.oshai</groupId>
             <artifactId>kotlin-logging-jvm</artifactId>
