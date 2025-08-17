@@ -14,12 +14,48 @@ set -euo pipefail
 
 usage() {
   echo "Usage: $0 <newVersion> [--snapshot] [--allow-dirty] [--tag] [--push]"
+  echo "  newVersion: SemVer MAJOR.MINOR.PATCH, e.g., 1.2.3 or 1.2.3-rc.1"
+  echo "  Do not include -SNAPSHOT in <newVersion>; use --snapshot."
   exit 1
 }
 
-if [[ ${#} -lt 1 ]]; then usage; fi
+is_valid_version() {
+  [[ "$1" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]
+}
+
+if [[ $# -lt 1 ]]; then usage; fi
+
+case "${1:-}" in
+  -h|--help) usage ;;
+esac
 
 NEW_VERSION="$1"
+
+# Refuse options as version (e.g., '--help')
+if [[ "$NEW_VERSION" == -* ]]; then
+  echo "❌ First argument must be a version, not an option."
+  usage
+fi
+
+# Normalize: strip leading 'v' (e.g., v1.2.3 -> 1.2.3)
+if [[ "$NEW_VERSION" =~ ^v[0-9] ]]; then
+  echo "ℹ️  Stripping leading 'v' from version '${NEW_VERSION}'"
+  NEW_VERSION="${NEW_VERSION#v}"
+fi
+
+# Disallow passing -SNAPSHOT directly; use the flag
+if [[ "$NEW_VERSION" =~ -SNAPSHOT$ ]]; then
+  echo "❌ Do not include -SNAPSHOT in <newVersion>. Pass the base version and use --snapshot."
+  exit 1
+fi
+
+# Strict SemVer validation
+if ! is_valid_version "$NEW_VERSION"; then
+  echo "❌ Invalid version: '$NEW_VERSION'"
+  echo "   Expected SemVer: MAJOR.MINOR.PATCH, e.g., 1.2.3 or 1.2.3-rc.1"
+  exit 1
+fi
+
 shift || true
 
 APPEND_SNAPSHOT=false
@@ -66,9 +102,6 @@ echo "🔧 Bumping project version to: ${FINAL_VERSION}"
 echo "   (This only updates <version> for the parent and modules; dependencies remain unchanged)"
 
 # Use Maven Versions Plugin to update all modules' project version.
-# Key flags:
-# -DprocessAllModules=true updates every module that belongs to the reactor.
-# -DgenerateBackupPoms=false avoids creating pom.xml.versionsBackup files.
 mvn -q versions:set \
   -DnewVersion="${FINAL_VERSION}" \
   -DprocessAllModules=true \

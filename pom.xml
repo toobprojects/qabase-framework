@@ -3,13 +3,38 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.toob.qabase</groupId>
+    <groupId>io.github.toobprojects</groupId>
     <artifactId>qabase-framework</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <name>QABase Framework [POM]</name>
-    <description>Framework for JVM Automation testing.</description>
+    <description>
+        QABase is a lightweight, modular JVM automation testing framework (JUnit 5 + Allure, RestAssured, Selenide) for rapid, standardized QA setups.
+    </description>
+    <url>https://github.com/toobprojects/qabase-framework</url>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/toobprojects/qabase-framework</url>
+        <connection>scm:git:https://github.com/toobprojects/qabase-framework.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/toobprojects/qabase-framework.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>thabo</id>
+            <name>Thabo Matjuda</name>
+            <url>https://github.com/toobprojects</url>
+        </developer>
+    </developers>
 
     <modules>
         <module>qabase-core</module>
@@ -136,19 +161,19 @@
 
             <!-- QA BASE Custom Libraries -->
             <dependency>
-                <groupId>com.toob.qabase</groupId>
+                <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-core</artifactId>
-                <version>${parent.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
-                <groupId>com.toob.qabase</groupId>
+                <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-rest</artifactId>
-                <version>${parent.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
-                <groupId>com.toob.qabase</groupId>
+                <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-web-ui</artifactId>
-                <version>${parent.version}</version>
+                <version>1.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -387,7 +412,7 @@
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
-<!--                <version>2.29.0</version>-->
+                <version>2.15.2</version>
                 <configuration>
                     <reportVersion>${allure.version}</reportVersion>
                     <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
@@ -419,6 +444,18 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <!-- Optional for CI: auto-publish after validation -->
+                    <!-- <autoPublish>true</autoPublish> -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
