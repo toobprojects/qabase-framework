@@ -99,7 +99,7 @@ This spins up a local server with rich, navigable results (screenshots, attachme
 
 We keep **Semantic Versioning**. To change the **project/module versions** safely (without touching dependency versions), use the script documented here:
 
-- **Version bump script & usage → [QABase — Version Bump Script (`bump-version.sh`)](docs/QABase - Version Bump Script (`bump-version.sh`).md)**
+- **Version bump script & usage → [QABase - Version Bump Script Guide.md](docs/qabase-version-bump-script-guide.md)**
 
 > TL;DR: run from repo root, e.g. `./bump-version.sh 1.1.0 --tag --push`
 
