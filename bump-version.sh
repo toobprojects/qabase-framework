@@ -29,9 +29,9 @@ set -euo pipefail
 # The selected code defines a usage function that prints instructions on how to use the script and then exits with status
 #   1. It explains the required argument (<newVersion>) and available options, and warns not to include -SNAPSHOT directly in the version.
 function usage() {
-  echo "Usage: $0 <newVersion> [--snapshot] [--allow-dirty] [--tag] [--push]"
-  echo "  newVersion: SemVer MAJOR.MINOR.PATCH, e.g., 1.2.3 or 1.2.3-rc.1"
-  echo "  Do not include -SNAPSHOT in <newVersion>; use --snapshot."
+  echo "📖 Usage: $0 <newVersion> [--snapshot] [--allow-dirty] [--tag] [--push]"
+  echo "🔢 newVersion: SemVer MAJOR.MINOR.PATCH, e.g., 1.2.3 or 1.2.3-rc.1"
+  echo "⚠️  Do not include -SNAPSHOT in <newVersion>; use --snapshot."
   exit 1
 }
 
