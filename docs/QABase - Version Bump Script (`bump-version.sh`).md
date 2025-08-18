@@ -1,3 +1,5 @@
+# 📦 QABase — Version Bump Script (`bump-version.sh`)
+---
 
 A safe, opinionated helper for updating **project/module versions** across a Maven multi-module repo.  
 It **does not** touch dependency versions.
