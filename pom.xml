@@ -463,6 +463,64 @@
             <id>release</id>
             <build>
                 <plugins>
+
+                    <!-- Packages and attaches a *-sources.jar for every module.
+                        Required by Maven Central so consumers can browse source.
+                        Runs at the `verify` phase using `jar-no-fork` to avoid re-invoking the build. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>verify</phase>
+                                <goals><goal>jar-no-fork</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Standard Java Javadoc packaging: attaches *-javadoc.jar.
+                         Complements Dokka for any Java bits or mixed modules.
+                         `failOnError=false` prevents doc lint from failing releases early on. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>verify</phase>
+                                <goals><goal>jar</goal></goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- Keep it resilient while you flesh out docs -->
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </plugin>
+
+                    <!-- Generates a Javadoc-style *-javadoc.jar for Kotlin via Dokka.
+                        Satisfies Central's javadoc requirement for Kotlin code.
+                        Bound to `package` with the `javadocJar` goal; `failOnWarning=false` keeps builds resilient. -->
+                    <plugin>
+                        <groupId>org.jetbrains.dokka</groupId>
+                        <artifactId>dokka-maven-plugin</artifactId>
+                        <version>${dokka-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>dokka-javadoc-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>javadocJar</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnWarning>false</failOnWarning>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <!-- Cryptographically signs all artifacts (*.asc) at `verify`.
                 Mandatory for Central to verify provenance.
                 pinentry-mode loopback` enables non-interactive signing in CI. -->
@@ -500,62 +558,6 @@
                         </configuration>
                     </plugin>
 
-                    <!-- Packages and attaches a *-sources.jar for every module.
-                         Required by Maven Central so consumers can browse source.
-                         Runs at the `verify` phase using `jar-no-fork` to avoid re-invoking the build. -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <phase>verify</phase>
-                                <goals><goal>jar-no-fork</goal></goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- Generates a Javadoc-style *-javadoc.jar for Kotlin via Dokka.
-                         Satisfies Central's javadoc requirement for Kotlin code.
-                         Bound to `package` with the `javadocJar` goal; `failOnWarning=false` keeps builds resilient. -->
-                    <plugin>
-                        <groupId>org.jetbrains.dokka</groupId>
-                        <artifactId>dokka-maven-plugin</artifactId>
-                        <version>${dokka-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>dokka-javadoc-jar</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>javadocJar</goal>
-                                </goals>
-                                <configuration>
-                                    <failOnWarning>false</failOnWarning>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- Standard Java Javadoc packaging: attaches *-javadoc.jar.
-                         Complements Dokka for any Java bits or mixed modules.
-                         `failOnError=false` prevents doc lint from failing releases early on. -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <phase>verify</phase>
-                                <goals><goal>jar</goal></goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <!-- Keep it resilient while you flesh out docs -->
-                            <failOnError>false</failOnError>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
