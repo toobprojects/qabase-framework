@@ -11,7 +11,12 @@
 
 
     <artifactId>qabase-web-ui</artifactId>
-    <name>QaBase Web UI [JAR]</name>
+    <name>QABase Web UI</name>
+    <description>
+      Web UI automation module for the QABase Framework.
+      Provides a concise setup for browser-based testing using Selenide,
+      with Allure reporting integration and shared utilities from QABase Core.
+    </description>
     <packaging>jar</packaging>
 
 

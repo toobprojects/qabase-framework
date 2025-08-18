@@ -11,7 +11,12 @@
 
 
     <artifactId>qabase-rest</artifactId>
-    <name>QaBase REST [JAR]</name>
+    <name>QABase REST</name>
+    <description>
+      REST API automation module for the QABase Framework.
+      Provides a ready-to-use setup with REST Assured, JSON serialization,
+      and common utilities for writing clean, maintainable API tests.
+    </description>
     <packaging>jar</packaging>
 
 

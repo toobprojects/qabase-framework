@@ -11,7 +11,12 @@
 
 
     <artifactId>qabase-core</artifactId>
-    <name>QaBase Core [JAR]</name>
+    <name>QABase Core</name>
+    <description>
+        Core utilities and base test infrastructure for the QABase Framework.
+        Provides JUnit 5 setup, Allure reporting integration, logging, and shared
+        test helpers used by the REST and Web UI modules.
+    </description>
     <packaging>jar</packaging>
 
 
