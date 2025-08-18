@@ -124,5 +124,4 @@ We keep **Semantic Versioning**. To change the **project/module versions** safel
 ---
 
 ## License
-
-Apache License 2.0 – see `LICENSE`.
+QABase is licensed under the [Apache License 2.0](LICENSE).
