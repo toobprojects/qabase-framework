@@ -48,8 +48,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <kotlin.version>2.1.20</kotlin.version>
-        <java.version>21</java.version>
-        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+        <java.version>17</java.version>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <spring-boot.version>3.5.4</spring-boot.version>
         <jackson-databind.version>2.18.3</jackson-databind.version>
 
@@ -250,7 +250,7 @@
             <!--
             This plugin ensures Kotlin code is compiled correctly during the build process.
                 •	Compiles Kotlin code for both main and test phases.
-                •	Targets JVM 21 (since we specified <java.version>21</java.version>).
+                •	Targets JVM 17 (since we specified <java.version>17</java.version>).
             -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -328,7 +328,7 @@
 
             <!--
             Maven Compiler Plugin
-                •	Compiles Java/Kotlin code with Java 21.
+                •	Compiles Java/Kotlin code with Java 17.
                 •	Configures Spring Boot’s annotation processor for configuration properties.
             -->
             <plugin>
@@ -336,8 +336,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.springframework.boot</groupId>
