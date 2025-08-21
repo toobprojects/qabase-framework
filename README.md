@@ -47,21 +47,21 @@ Add only the modules you need.
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-core</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.4</version>
 </dependency>
 
 <!-- API testing -->
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-rest</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.4</version>
 </dependency>
 
 <!-- Web UI testing -->
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-web-ui</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.4</version>
 </dependency>
 ```
 
@@ -69,9 +69,9 @@ Add only the modules you need.
 
 ```kotlin
 dependencies {
-  testImplementation("io.github.toobprojects:qabase-core:1.0.1")
-  testImplementation("io.github.toobprojects:qabase-rest:1.0.1")   // API testing
-  testImplementation("io.github.toobprojects:qabase-web-ui:1.0.1") // Web UI testing
+  testImplementation("io.github.toobprojects:qabase-core:1.0.4")
+  testImplementation("io.github.toobprojects:qabase-rest:1.0.4")   // API testing
+  testImplementation("io.github.toobprojects:qabase-web-ui:1.0.4") // Web UI testing
 }
 ```
 
