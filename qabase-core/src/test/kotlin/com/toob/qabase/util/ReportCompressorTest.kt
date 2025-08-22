@@ -1,17 +1,14 @@
 package com.toob.qabase.util
 
-import com.toob.qabase.core.AbstractCoreTest
+import com.toob.qabase.core.AbstractQABaseTest
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import java.nio.file.Files
-import kotlin.io.path.createTempDirectory
 import kotlin.test.Test
 
-class ReportCompressorTest : AbstractCoreTest() {
+class ReportCompressorTest : AbstractQABaseTest() {
 
 	private val log = logger()
 	private lateinit var tempDir: File
