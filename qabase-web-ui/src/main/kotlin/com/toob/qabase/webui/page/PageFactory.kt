@@ -16,11 +16,11 @@ final class PageFactory(private val context: ApplicationContext) {
 	/**
 	 * Get a Spring-managed page object using a class reference.
 	 */
-	fun <T> get(pageClass: Class<T>): T = context.getBean(pageClass)
+	fun <T : Any> get(pageClass: Class<T>): T = context.getBean(pageClass)
 
 	/**
 	 * DSL-style generic version of get() using reified type.
 	 * Usage: pageFactory.get<HomePage>()
 	 */
-	inline fun <reified T> get(): T = get(T::class.java)
+	inline fun <reified T : Any> get(): T = get(T::class.java)
 }
