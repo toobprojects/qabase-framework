@@ -14,13 +14,13 @@ import java.util.zip.ZipOutputStream
 
 object ReportCompressor {
 
-	private val log = QALogger.get(this::class.java)
+	private val log = logger()
 	private val TIME_STAMP_FORMAT = SimpleDateFormat("yyyy-MM-dd-HHmmss")
 
 	// === Utility Method 1: Standard ZIP (Good for Windows users, IDEs, etc.) ===
 	fun zipDirectory(sourceDir: File, outputZip: File) {
 		if (!sourceDir.exists() || !sourceDir.isDirectory) {
-			log.error("[ZIP] Source folder does not exist: ${sourceDir.absolutePath}")
+			log.error{"[ZIP] Source folder does not exist: ${sourceDir.absolutePath}"}
 			return
 		}
 
@@ -31,7 +31,7 @@ object ReportCompressor {
 			// Even if errors occur
 			zipFolder(sourceDir, sourceDir, zipOut)
 		}
-		log.info("[ZIP] Folder zipped to: ${outputZip.absolutePath}")
+		log.info{"[ZIP] Folder zipped to: ${outputZip.absolutePath}"}
 	}
 
 	private fun zipFolder(rootDir: File, currentFile: File, zipOut: ZipOutputStream) {
@@ -66,7 +66,7 @@ object ReportCompressor {
 				}
 			}
 		}
-		log.info("[TAR.GZ] Folder compressed to: ${outputTarGz.absolutePath}")
+		log.info{"[TAR.GZ] Folder compressed to: ${outputTarGz.absolutePath}"}
 	}
 
 	private fun addFilesToTarGz(file: File, parent: String, taos: TarArchiveOutputStream) {

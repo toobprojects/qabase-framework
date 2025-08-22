@@ -1,8 +1,8 @@
 package com.toob.qabase.core
 
 import com.toob.qabase.util.FileOps
-import com.toob.qabase.util.QALogger
 import com.toob.qabase.util.ReportCompressor
+import com.toob.qabase.util.logger
 import io.qameta.allure.Allure
 import java.io.File
 import java.text.SimpleDateFormat
@@ -18,7 +18,7 @@ private const val EXT_TEXT = "txt"
  */
 object AllureExtensions {
 
-    private val log = QALogger.get(this::class.java)
+    private val log = logger()
     private val REPORTS_TIME_STAMP_FORMAT = SimpleDateFormat("yyyy-MM-dd-HHmmss")
     private const val ALLURE_REPORTS_DIR_NAME = "allure-reports"
 
@@ -83,7 +83,7 @@ object AllureExtensions {
 
         // First make sure the "allure-reports" exists.
         if (!allureDir.exists() || !allureDir.isDirectory) {
-            log.error("⚠️ $ALLURE_REPORTS_DIR_NAME folder not found in: ${allureDir.absolutePath}")
+            log.error{"⚠️ $ALLURE_REPORTS_DIR_NAME folder not found in: ${allureDir.absolutePath}"}
             return
         }
 
@@ -96,7 +96,7 @@ object AllureExtensions {
 
         // Finally compress
         ReportCompressor.zipDirectory(allureDir, output)
-        log.info("✅ Allure report zipped to: ${output.absolutePath}")
+        log.info{"✅ Allure report zipped to: ${output.absolutePath}"}
     }
 
 }
