@@ -13,8 +13,11 @@ private const val EXT_JSON = "json"
 private const val EXT_TEXT = "txt"
 
 /**
- * This Kotlin object provides utility functions for ...
- * ...integrating Allure reporting into your API test automation framework.
+ * A centralized utility object for integrating Allure reporting into the API test automation framework.
+ * This object provides convenient functions for logging test steps, attaching various types of data
+ * (such as text and JSON) to Allure reports, and compressing the generated Allure report directory
+ * into a zip archive. It simplifies and standardizes how Allure reporting features are used throughout
+ * the test codebase.
  */
 object AllureExtensions {
 
@@ -23,13 +26,15 @@ object AllureExtensions {
     private const val ALLURE_REPORTS_DIR_NAME = "allure-reports"
 
     /**
-     * This function wraps a test step inside an Allure report entry.
-     * It ensures that each test action is logged as a step in the Allure report.
-     * It converts the action() into an Allure.ThrowableRunnable, which captures exceptions that occur inside the step.
-     * It then calls Allure.step(...), passing the description and the wrapped action.
+     * Executes a test step within an Allure report entry.
      *
-     * @param description : String → A textual description of the step.
-     * @param action: () -> T → A lambda function representing the step.
+     * This function wraps the given [action] lambda inside an Allure step, ensuring that the step
+     * description and any exceptions thrown during the execution are properly recorded in the Allure report.
+     * It returns the result of the [action] lambda.
+     *
+     * @param description A textual description of the step to be displayed in the Allure report.
+     * @param action A lambda representing the code block to execute as the step.
+     * @return The result of the executed [action].
      */
     @JvmStatic
     fun <T> step(description: String, action: () -> T): T {
@@ -43,9 +48,13 @@ object AllureExtensions {
 
 
     /**
-     * Adds TEXT attachment to Allure Reports.
-     * @param title : String → Title of the attachment
-     * @param body: () -> T → Description of the attachment
+     * Attaches plain text content to the Allure report.
+     *
+     * Useful for including debugging information, logs, or any textual data that helps understand
+     * the test execution context.
+     *
+     * @param title Title of the attachment shown in the Allure report.
+     * @param body The plain text content to attach.
      */
     @JvmStatic
     fun attachText( title: String, body: String) =
@@ -57,9 +66,13 @@ object AllureExtensions {
         )
 
     /**
-     * Adds JSON attachment to Allure Reports.
-     * @param title : String → Title of the attachment
-     * @param body: () -> T → Description of the attachment
+     * Attaches JSON content to the Allure report.
+     *
+     * This is helpful for including JSON payloads such as API requests, responses, or other structured data
+     * for debugging and traceability.
+     *
+     * @param title Title of the attachment shown in the Allure report.
+     * @param body The JSON string content to attach.
      */
     @JvmStatic
     fun attachJson( title: String, body: String) =
@@ -72,29 +85,37 @@ object AllureExtensions {
 
 
     /**
-     * Mainly used to Zip the "allure-reports" folder when tests are running.
-     * This will help QA Engineers take a snapshot when done running tests.
-     * @param targetDir : File → Destination of where you want to ZIP the file to.
-     * Will default to your DOWNLOADS folder when not specified.
+     * Compresses the "allure-reports" directory into a zip archive at the specified [targetDir].
+     *
+     * This method is intended to snapshot the Allure report output after test execution, making it easier
+     * for QA engineers to archive, share, or upload the reports. If [targetDir] is not specified,
+     * it defaults to the user's downloads directory.
+     *
+     * The method logs an error if the "allure-reports" directory does not exist, and logs info upon
+     * successful compression including the path to the generated zip file.
+     *
+     * @param targetDir Destination directory for the zip archive. Defaults to the downloads folder.
      */
     @JvmStatic
     fun zipReportsTo(targetDir: File = FileOps.downloads()) {
         val allureDir = File(ALLURE_REPORTS_DIR_NAME)
 
-        // First make sure the "allure-reports" exists.
+        // Check if the "allure-reports" directory exists and is a directory
         if (!allureDir.exists() || !allureDir.isDirectory) {
             log.error{"⚠️ $ALLURE_REPORTS_DIR_NAME folder not found in: ${allureDir.absolutePath}"}
             return
         }
 
-        // Create the target directory if it does not exist.
-        if (!targetDir.exists()) targetDir.mkdirs()
+        // Create the target directory if it does not exist
+        if (!targetDir.exists()) {
+            targetDir.mkdirs()
+        }
 
-        // Get ready to Compress
+        // Prepare the output zip file with timestamped name
         val archiveName = "allure-${REPORTS_TIME_STAMP_FORMAT.format(Date())}.zip"
         val output = File(targetDir, archiveName)
 
-        // Finally compress
+        // Compress the allure-reports directory into the output zip file
         ReportCompressor.zipDirectory(allureDir, output)
         log.info{"✅ Allure report zipped to: ${output.absolutePath}"}
     }
