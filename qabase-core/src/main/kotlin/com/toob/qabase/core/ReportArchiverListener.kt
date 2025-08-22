@@ -1,7 +1,7 @@
 package com.toob.qabase.core
 
+import com.toob.qabase.util.QALogger
 import com.toob.qabase.util.ReportCompressor
-import com.toob.qabase.util.logger
 import org.springframework.context.event.ContextClosedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -12,7 +12,7 @@ import java.io.File
 class ReportArchiverListener {
 
 	companion object {
-		private val log = logger()
+		private val log = QALogger.get(this::class.java)
 
 		private const val ALLURE_REPORTS_DIR = "allure-results"
 		private const val TARGET_DIR = "target"
@@ -27,9 +27,9 @@ class ReportArchiverListener {
 
 		if (allureReportFolder.exists()) {
 			ReportCompressor.tarGzipDirectory(allureReportFolder, outputZip)
-			log.info {"✅  Zipped Allure report to : ${outputZip.absolutePath}"}
+			log.info ("✅  Zipped Allure report to : ${outputZip.absolutePath}")
 		} else {
-			log.error{"⚠️  No allure-reports folder found at : ${allureReportFolder.absolutePath}"}
+			log.error("⚠️  No allure-reports folder found at : ${allureReportFolder.absolutePath}")
 		}
 	}
 

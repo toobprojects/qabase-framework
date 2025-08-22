@@ -10,7 +10,7 @@ import kotlin.test.Test
 
 class ReportCompressorTest : AbstractQABaseTest() {
 
-	private val log = logger()
+	private val log = QALogger.get(this::class.java)
 	private lateinit var tempDir: File
 	private lateinit var dummyReportDir: File
 
@@ -37,7 +37,7 @@ class ReportCompressorTest : AbstractQABaseTest() {
 		ReportCompressor.zipDirectory(dummyReportDir, zipFile)
 
 		assertTrue(zipFile.exists(), "ZIP file should be created in Downloads folder")
-		log.info{"✅ Zipped file: ${zipFile.absolutePath}"}
+		log.info("✅ Zipped file: ${zipFile.absolutePath}")
 	}
 
 	@Test
@@ -46,7 +46,7 @@ class ReportCompressorTest : AbstractQABaseTest() {
 		ReportCompressor.tarGzipDirectory(dummyReportDir, tarGzFile)
 
 		assertTrue(tarGzFile.exists(), "TAR.GZ file should be created in Downloads folder")
-		log.info{"✅ TAR.GZ file: ${tarGzFile.absolutePath}"}
+		log.info("✅ TAR.GZ file: ${tarGzFile.absolutePath}")
 	}
 
 }
