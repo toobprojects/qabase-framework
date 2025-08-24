@@ -11,6 +11,8 @@ import java.util.Date
 
 private const val EXT_JSON = "json"
 private const val EXT_TEXT = "txt"
+private const val MEDIA_TYPE_JSON = "application/json"
+private const val MEDIA_TYPE_TEXT = "text/plain"
 
 /**
  * A centralized utility object for integrating Allure reporting into the API test automation framework.
@@ -23,7 +25,7 @@ object AllureExtensions {
 
     private val log = logger()
     private val REPORTS_TIME_STAMP_FORMAT = SimpleDateFormat("yyyy-MM-dd-HHmmss")
-    private const val ALLURE_REPORTS_DIR_NAME = "allure-reports"
+    private const val ALLURE_RESULTS_DIR_NAME = "allure-results"
 
     /**
      * Executes a test step within an Allure report entry.
@@ -60,7 +62,7 @@ object AllureExtensions {
     fun attachText( title: String, body: String) =
         Allure.addAttachment(
             title,   // Attachment title in the report
-            "text/plain",  // Specify TEXT format
+            MEDIA_TYPE_TEXT,  // Specify TEXT format
             body,   // Body of the Attachment
             EXT_TEXT // File extension type
         )
@@ -78,7 +80,7 @@ object AllureExtensions {
     fun attachJson( title: String, body: String) =
         Allure.addAttachment(
             title,   // Attachment title in the report
-            "application/json",  // Specify JSON format
+            MEDIA_TYPE_JSON,  // Specify JSON format
             body,   // Body of the Attachment
             EXT_JSON // File extension type
         )
@@ -98,11 +100,11 @@ object AllureExtensions {
      */
     @JvmStatic
     fun zipReportsTo(targetDir: File = FileOps.downloads()) {
-        val allureDir = File(ALLURE_REPORTS_DIR_NAME)
+        val allureDir = File(ALLURE_RESULTS_DIR_NAME)
 
         // Check if the "allure-reports" directory exists and is a directory
         if (!allureDir.exists() || !allureDir.isDirectory) {
-            log.error{"⚠️ $ALLURE_REPORTS_DIR_NAME folder not found in: ${allureDir.absolutePath}"}
+            log.error{"⚠️ $ALLURE_RESULTS_DIR_NAME folder not found in: ${allureDir.absolutePath}"}
             return
         }
 
