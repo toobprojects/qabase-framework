@@ -1,4 +1,4 @@
-package com.toob.qabase.http
+package com.toob.qabase.http.client
 
 import com.toob.qabase.core.AllureExtensions.step
 import com.toob.qabase.http.support.HttpSupport

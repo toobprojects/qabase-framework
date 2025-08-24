@@ -1,11 +1,11 @@
 package com.toob.qabase.http
 
 import com.toob.qabase.core.AllureExtensions.step
+import com.toob.qabase.http.client.RestClient
 import com.toob.qabase.http.model.Todo
 import com.toob.qabase.http.support.HttpSupport
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
-import io.qameta.allure.Step
 import io.qameta.allure.Story
 import org.hamcrest.Matchers.greaterThan
 import kotlin.test.Test

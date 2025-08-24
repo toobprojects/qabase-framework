@@ -1,4 +1,4 @@
-package com.toob.qabase.http
+package com.toob.qabase.http.client
 
 
 object RestModuleConstants {
