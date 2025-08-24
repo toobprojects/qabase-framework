@@ -1,4 +1,4 @@
-package com.toob.qabase.core
+package com.toob.qabase.events
 
 import com.toob.qabase.util.ReportCompressor
 import com.toob.qabase.util.logger
