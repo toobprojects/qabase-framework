@@ -18,6 +18,6 @@ enum class StatusFamily(val range: IntRange) {
 		/** Determine the family for a specific status code. */
 		@JvmStatic
 		fun of(status: Int): StatusFamily =
-			values().first { status in it.range }
+			entries.first { status in it.range }
 	}
 }
