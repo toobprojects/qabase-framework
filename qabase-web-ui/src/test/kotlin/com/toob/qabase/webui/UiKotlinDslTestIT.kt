@@ -1,15 +1,14 @@
-package com.toob.qabase.webui.test
+package com.toob.qabase.webui
 
 import com.toob.qabase.QaBaseTest
 import com.toob.qabase.webui.dsl.Sel
 import com.toob.qabase.webui.dsl.UI
 import com.toob.qabase.webui.dsl.UI.into
-import com.toob.qabase.webui.dsl.UI.shouldHaveText
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Test
 
 @QaBaseTest
-class UiKotlinDslTest {
+class UiKotlinDslTestIT {
 
 	@Test
 	@DisplayName("🔎 Kotlin DSL: infix + fluent")

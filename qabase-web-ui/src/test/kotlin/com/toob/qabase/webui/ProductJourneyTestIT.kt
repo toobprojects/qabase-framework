@@ -1,4 +1,4 @@
-package com.toob.qabase.webui.test
+package com.toob.qabase.webui
 
 import com.toob.qabase.QaBaseTest
 import com.toob.qabase.webui.dsl.UI
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import kotlin.test.Test
 
 @QaBaseTest
-class ProductJourneyTest(@Autowired private val pages: PageFactory) {
+class ProductJourneyTestIT(@Autowired private val pages: PageFactory) {
 
 	@Test
 	fun openAndAdd() {

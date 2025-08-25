@@ -1,4 +1,4 @@
-package com.toob.qabase.webui.test
+package com.toob.qabase.webui
 
 import com.toob.qabase.QaBaseTest
 import com.toob.qabase.webui.flows.ShoppingFlows
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import kotlin.test.Test
 
 @QaBaseTest
-class ShoppingFlowTest(@Autowired private val shopping: ShoppingFlows) {
+class ShoppingFlowTestIT(@Autowired private val shopping: ShoppingFlows) {
 
 	@Test
 	fun addItem() {
