@@ -4,7 +4,7 @@ import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.Selenide.switchTo
 import com.toob.qabase.core.AllureExtensions.step
 
-import com.toob.qabase.webui.ext.SelenideExtensions.byCss
+import com.toob.qabase.webui.dsl.Sel.byCss
 import io.qameta.allure.Step
 import org.springframework.stereotype.Component
 

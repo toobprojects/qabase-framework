@@ -1,4 +1,4 @@
-package com.toob.qabase.webui.ext
+package com.toob.qabase.webui.dsl
 
 import com.codeborne.selenide.Selenide.`$`
 import com.codeborne.selenide.Selenide.`$$`
@@ -11,7 +11,7 @@ import org.openqa.selenium.By
  * The functions in this object make it easy to open the browser, locate elements by name, id, or CSS selector,
  * and retrieve collections of elements. All functions are static and designed for concise, readable test code.
  */
-object SelenideExtensions {
+object Sel {
 
     /**
      * Opens the browser at the base URL ("/").
