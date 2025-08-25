@@ -1,4 +1,4 @@
-package com.toob.qabase.webui.page
+package com.toob.qabase.webui.pages
 
 import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.Selenide.switchTo
