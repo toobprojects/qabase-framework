@@ -1,6 +1,7 @@
 package com.toob.qabase.webui
 
 import com.codeborne.selenide.Configuration
+import com.codeborne.selenide.logevents.LogEventListener
 import com.codeborne.selenide.logevents.SelenideLogger
 import io.qameta.allure.selenide.AllureSelenide
 import jakarta.annotation.PostConstruct
@@ -35,6 +36,8 @@ class QaBaseWebUIFactory(private val webUIConfigs: WebUIConfigs) {
      */
     @PostConstruct
     fun configureSelenideAndAllure() {
+		// Set Selenide base URL from configuration
+		Configuration.baseUrl = webUIConfigs.baseUrl
         // Set Selenide browser type (e.g., chrome, firefox) from configuration
         Configuration.browser = webUIConfigs.browser
         // Set Selenide timeout value from configuration
@@ -45,6 +48,7 @@ class QaBaseWebUIFactory(private val webUIConfigs: WebUIConfigs) {
         Configuration.headless = webUIConfigs.headless
 
         // Register AllureSelenide listener for enhanced Allure reporting with screenshots and page sources
+		runCatching<LogEventListener?> { SelenideLogger.removeListener("AllureSelenide") }
         SelenideLogger.addListener(
             "AllureSelenide",
             AllureSelenide()

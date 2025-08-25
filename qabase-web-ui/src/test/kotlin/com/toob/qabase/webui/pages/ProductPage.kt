@@ -14,6 +14,11 @@ class ProductPage : VisiblePage<ProductPage> {
 		return this
 	}
 
+	@Step("Open product by id={id}")
+	fun openProductById(id: Int): ProductPage = ProductPage().apply {
+		UI.go("/prod.html?idp_=$id")   // baseUrl + relative path
+	}
+
 	@Step("Add product to cart")
 	fun addToCart(): ProductPage {
 		UI.clickCss("a[onclick^='addToCart']")

@@ -15,7 +15,7 @@ class WebUiFileConfigsIT {
 	fun `Should Load Web UI & Selenide Configurations`() {
 		assertNotNull(webUiFileConfig)
 
-		assertEquals("https://google.com", webUiFileConfig.baseUrl)
+		assertEquals("https://www.demoblaze.com", webUiFileConfig.baseUrl)
 		assertEquals("chrome", webUiFileConfig.browser)
 		assertEquals("1920x1080", webUiFileConfig.browseWindowSize)
 		assertEquals(10000, webUiFileConfig.timeout)

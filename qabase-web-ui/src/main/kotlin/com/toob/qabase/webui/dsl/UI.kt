@@ -57,7 +57,7 @@ object UI {
 	@JvmStatic fun visit(url: String): UI = apply { open(url) }
 
 	@Step("Home")
-	@JvmStatic fun home(): UI = apply { Sel.open() }
+	@JvmStatic fun home(): UI = apply { open("/") }
 
 	@Step("Click CSS {css}")
 	@JvmStatic fun clickCss(css: String): UI = apply { Sel.css(css).shouldBe(enabled).click() }

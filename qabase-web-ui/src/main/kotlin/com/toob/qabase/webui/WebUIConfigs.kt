@@ -11,29 +11,29 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * It provides settings such as the base URL, browser, window size, timeout, and headless mode for test execution.
  */
 @ConfigurationProperties(prefix = WEB_APPLICATION)
-class WebUIConfigs {
+data class WebUIConfigs (
     /**
      * Represents the base URL of the application under test.
      */
-    lateinit var baseUrl: String
+	var baseUrl: String = "",
 
     /**
      * Defines the browser to be used for tests (e.g., Chrome, Firefox).
      */
-    lateinit var browser: String
+	var browser: String = "chrome",
 
     /**
      * Sets the default browser window size (e.g., 1920x1080).
      */
-    lateinit var browseWindowSize: String
+	var browseWindowSize: String = "1920x1080",
 
     /**
      * Defines the global timeout for waiting on elements in seconds.
      */
-    var timeout: Long = 0
+	var timeout: Long = 4000,
 
     /**
      * Controls whether the browser should run in headless mode (true) or with a UI (false).
      */
-    var headless: Boolean = false
-}
+	var headless: Boolean = false
+)

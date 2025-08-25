@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component
 class HomePage : VisiblePage<HomePage> {
 
 	@Step("Open Home")
-	fun open(): HomePage {
-		UI.visit("https://www.demoblaze.com/")
-		return this
-	}
+	fun open(): HomePage = apply { UI.home() }
 
 	@Step("Ensure product grid is visible")
 	fun shouldSeeProducts(): HomePage {

@@ -6,9 +6,10 @@
 
 # CUSTOM APP
 # ======================================================================================================================
-web-application:
-  base-url: "https://google.com"
-  browser: "chrome"
-  browse-window-size: "1920x1080"
-  timeout: 10000
-  headless: true
+qabase:
+  webui:
+    base-url: "https://www.demoblaze.com"
+    browser: "chrome"
+    browser-window-size: "1920x1080"
+    timeout: 10000
+    headless: true
