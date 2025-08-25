@@ -7,6 +7,7 @@ import io.qameta.allure.Allure
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.function.Supplier
 
 
 private const val EXT_JSON = "json"
@@ -39,7 +40,7 @@ object AllureExtensions {
      * @return The result of the executed [action].
      */
     @JvmStatic
-    fun <T> step(description: String, action: () -> T): T {
+    fun <T> step( description: String, action: () -> T): T {
 
         // Wrap the provided action inside an Allure ThrowableRunnable (captures errors)
         val throwableRunnable = Allure.ThrowableRunnable { action() }
@@ -47,6 +48,17 @@ object AllureExtensions {
         // Log the step description and execute the action
         return Allure.step( description, throwableRunnable)
     }
+
+	/**
+	 * Java-friendly overload: allows calling step("desc", () -> value) from Java without Kotlin Function0.
+	 */
+	@JvmStatic
+	fun <T> step( description: String, supplier: Supplier<T>): T {
+		return Allure.step(
+			description,
+			Allure.ThrowableRunnable { supplier.get() }
+		)
+	}
 
 
     /**
@@ -59,13 +71,17 @@ object AllureExtensions {
      * @param body The plain text content to attach.
      */
     @JvmStatic
-    fun attachText( title: String, body: String) =
-        Allure.addAttachment(
-            title,   // Attachment title in the report
-            MEDIA_TYPE_TEXT,  // Specify TEXT format
-            body,   // Body of the Attachment
-            EXT_TEXT // File extension type
-        )
+    fun attachText( title: String, body: String) {
+		body.let {
+			Allure.addAttachment(
+				title,   // Attachment title in the report
+				MEDIA_TYPE_TEXT,  // Specify TEXT format
+				body,   // Body of the Attachment
+				EXT_TEXT // File extension type
+			)
+		}
+	}
+
 
     /**
      * Attaches JSON content to the Allure report.
@@ -77,13 +93,17 @@ object AllureExtensions {
      * @param body The JSON string content to attach.
      */
     @JvmStatic
-    fun attachJson( title: String, body: String) =
-        Allure.addAttachment(
-            title,   // Attachment title in the report
-            MEDIA_TYPE_JSON,  // Specify JSON format
-            body,   // Body of the Attachment
-            EXT_JSON // File extension type
-        )
+    fun attachJson( title: String, body: String) {
+		body.let {
+			Allure.addAttachment(
+				title,   // Attachment title in the report
+				MEDIA_TYPE_JSON,  // Specify JSON format
+				body,   // Body of the Attachment
+				EXT_JSON // File extension type
+			)
+		}
+	}
+
 
 
     /**
