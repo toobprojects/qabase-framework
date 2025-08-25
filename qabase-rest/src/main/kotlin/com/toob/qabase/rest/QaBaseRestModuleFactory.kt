@@ -1,4 +1,4 @@
-package com.toob.qabase.http
+package com.toob.qabase.rest
 
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration

@@ -1,4 +1,4 @@
-package com.toob.qabase.http
+package com.toob.qabase.rest
 
 import com.toob.qabase.QaBaseTest
 import com.toob.qabase.util.logger

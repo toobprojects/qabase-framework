@@ -1,18 +1,18 @@
-package com.toob.qabase.http
+package com.toob.qabase.rest
 
 import com.toob.qabase.core.AllureExtensions.step
-import com.toob.qabase.http.client.RestClient
-import com.toob.qabase.http.model.Todo
-import com.toob.qabase.http.support.HttpSupport
+import com.toob.qabase.rest.client.RestClient
+import com.toob.qabase.rest.model.Todo
+import com.toob.qabase.rest.support.HttpSupport
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import org.hamcrest.Matchers.greaterThan
 import kotlin.test.Test
 
-@Epic("JSONPlaceholder API Tests")
-@Feature("TODOs API CRUD Operations")
-class TodoApiIT : AbstractHttpTest() {
+@Epic("JSONPlaceholder API Tests - Kotlin")
+@Feature("Fetch All & Create One TODOs API")
+class TodoApiKIt : AbstractRestTest() {
 
     @Test
     @Story("Fetch all TODO items")

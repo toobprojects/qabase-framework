@@ -1,5 +1,7 @@
-package com.toob.qabase.http.support
+package com.toob.qabase.rest.support
 
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.toob.qabase.core.AllureExtensions
 import com.toob.qabase.core.AllureExtensions.step
@@ -15,7 +17,9 @@ import kotlin.test.assertNotNull
 object HttpSupport {
 
 	// Jackson ObjectMapper used for JSON serialization and deserialization
-	private val mapper = ObjectMapper()
+	private val internalMapper = ObjectMapper()
+		.registerModule(KotlinModule.Builder().build())
+		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
 	/**
 	 * Creates a Kotlinx Serialization Json configuration with:
@@ -30,7 +34,6 @@ object HttpSupport {
 			ignoreUnknownKeys = true
 			encodeDefaults = true
 		}
-
 
 	/**
 	 * Attaches the API response body to the Allure report.
@@ -112,7 +115,7 @@ object HttpSupport {
 	@JvmStatic
 	fun toJson(obj: Any?): String? {
 		return try {
-			obj?.let { mapper.writeValueAsString(it) }
+			obj?.let { internalMapper.writeValueAsString(it) }
 		} catch (exception: Exception) {
 			null
 		}
@@ -129,7 +132,7 @@ object HttpSupport {
 	fun toPrettyJson(obj: Any?): String? {
 		return try {
 			obj?.let {
-				mapper
+				internalMapper
 					.writerWithDefaultPrettyPrinter()
 					.writeValueAsString(it)
 			}
@@ -137,4 +140,11 @@ object HttpSupport {
 			null
 		}
 	}
+
+	// Public getter (works for both Kotlin & Java)
+	@JvmStatic
+	val mapper: ObjectMapper
+		get() = internalMapper
+
+
 }

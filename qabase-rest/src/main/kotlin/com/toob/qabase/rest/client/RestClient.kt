@@ -1,7 +1,7 @@
-package com.toob.qabase.http.client
+package com.toob.qabase.rest.client
 
 import com.toob.qabase.core.AllureExtensions.step
-import com.toob.qabase.http.support.HttpSupport
+import com.toob.qabase.rest.support.HttpSupport
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import io.restassured.response.Response
