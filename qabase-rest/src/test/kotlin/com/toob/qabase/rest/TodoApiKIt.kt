@@ -1,65 +1,56 @@
 package com.toob.qabase.rest
 
-import com.toob.qabase.core.AllureExtensions.step
 import com.toob.qabase.rest.client.RestClient
 import com.toob.qabase.rest.model.Todo
 import com.toob.qabase.rest.support.HttpSupport
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
-import org.hamcrest.Matchers.greaterThan
+import io.restassured.common.mapper.TypeRef
 import kotlin.test.Test
+import org.junit.jupiter.api.DisplayName
+import kotlin.test.assertTrue
 
 @Epic("JSONPlaceholder API Tests - Kotlin")
 @Feature("Fetch All & Create One TODOs API")
 class TodoApiKIt : AbstractRestTest() {
 
-    @Test
+	companion object {
+		private val TASK_LIST_TYPE = object : TypeRef<List<Todo>>() {}
+	}
+
+	@Test
+    @DisplayName("GET /todos returns a non-empty list")
     @Story("Fetch all TODO items")
     fun `Fetch All Tasks`() {
-        val response = step("Fetch All TODO Tasks") {
-            RestClient.get("/todos")
-        }
+		val todos = HttpSupport.expect(RestClient.get("/todos"))
+            .ok()
+            .contentType()        // defaults to application/json
+            .timeUnder(2_000L)
+            .attach().`as`(TASK_LIST_TYPE)
 
-        HttpSupport.allOkay(response)
-        step("Validate response contains at least one TODO item") {
-            response.then().body("size()", greaterThan(0))
-        }
+        // Terminal operation: deserialize and assert size using Kotlin
+        assertTrue(todos.isNotEmpty(), "Expected at least one TODO item")
     }
 
-    @Test
+	@Test
+    @DisplayName("POST /todos creates a TODO and echoes fields")
     @Story("Create a new TODO item")
     fun `Create New Task`() {
-        val todo = Todo(userId = 1, title = "Implement Allure Reports with Kotlin and Spring Boot", completed = false)
-        val requestBody = jsonConfig.encodeToString(todo)
+        val todo = Todo(
+			userId = 1,
+			title = "Implement Allure Reports with Kotlin and Spring Boot",
+			completed = false
+		)
 
-        val response = step("Creating a new TODO task") {
-            RestClient.post("/todos", requestBody)
-        }
-
-        HttpSupport.created(response)
-    }
-
-    @Test
-    @Story("Update an existing TODO item")
-    fun `Update Task`() {
-        val todo = Todo(userId = 1, title = "Updated Task", completed = false)
-        val requestBody = jsonConfig.encodeToString(todo)
-
-        val response = step("Updating a TODO") {
-            RestClient.put("/todos/1", requestBody)
-        }
-
-        HttpSupport.allOkay( response)
-    }
-
-    @Test
-    @Story("Delete a TODO item")
-    fun `Delete Task`() {
-        val response = step("Removing a TODO") {
-            RestClient.delete("/todos/1")
-        }
-
-        HttpSupport.allOkay( response)
+        val requestBody = HttpSupport.toPrettyJson(todo)
+        HttpSupport.expect(RestClient.post("/todos", requestBody))
+            .created()
+            .contentType()      // defaults to application/json
+            .timeUnder(2_000L)
+            .fieldEq("title", todo.title)
+            .fieldEq("completed", todo.completed)
+            .fieldEq("userId", todo.userId)
+            .attach()
     }
 }

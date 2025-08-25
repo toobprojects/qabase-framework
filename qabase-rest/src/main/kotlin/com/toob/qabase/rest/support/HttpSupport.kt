@@ -113,13 +113,7 @@ object HttpSupport {
 	 * @return String? - The compact JSON string or null if conversion fails.
 	 */
 	@JvmStatic
-	fun toJson(obj: Any?): String? {
-		return try {
-			obj?.let { internalMapper.writeValueAsString(it) }
-		} catch (exception: Exception) {
-			null
-		}
-	}
+	fun toJson(value: Any?): String = internalMapper.writeValueAsString(value)
 
 	/**
 	 * Converts the given object to a pretty-printed JSON string.
@@ -129,17 +123,11 @@ object HttpSupport {
 	 * @return String? - The pretty JSON string or null if conversion fails.
 	 */
 	@JvmStatic
-	fun toPrettyJson(obj: Any?): String? {
-		return try {
-			obj?.let {
-				internalMapper
-					.writerWithDefaultPrettyPrinter()
-					.writeValueAsString(it)
-			}
-		} catch (exception: Exception) {
-			null
-		}
-	}
+	fun toPrettyJson(obj: Any?): String =
+		internalMapper
+			.writerWithDefaultPrettyPrinter()
+			.writeValueAsString(obj)
+
 
 	// Public getter (works for both Kotlin & Java)
 	@JvmStatic
