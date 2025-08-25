@@ -66,6 +66,7 @@ object HttpSupport {
 	 * Useful for confirming that the request was successfully processed by the server.
 	 * Also logs this verification step in the Allure report.
 	 */
+	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
 	@JvmStatic
 	fun allOkay(response: Response) =
 		verifyStatusCode(response, 200, "✅ HTTP OK confirmation (200)")
@@ -75,6 +76,7 @@ object HttpSupport {
 	 * Indicates that a new resource was successfully created on the server.
 	 * Also logs this verification step in the Allure report.
 	 */
+	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
 	@JvmStatic
 	fun created(response: Response) =
 		verifyStatusCode(response, 201, "✅ Record successfully Created (201)")
@@ -84,6 +86,7 @@ object HttpSupport {
 	 * Indicates that the request was successful but there is no content to return.
 	 * Also logs this verification step in the Allure report.
 	 */
+	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
 	@JvmStatic
 	fun allOkayWithoutContent(response: Response) =
 		verifyStatusCode(response, 204, "✅ No Content but request successful (204)")
@@ -96,6 +99,7 @@ object HttpSupport {
 	 * @param response Response - The REST Assured HTTP response object to validate.
 	 * @param message String - Descriptive message for logging in Allure.
 	 */
+	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
 	@JvmStatic
 	fun verifyStatusCode(response: Response, expectedCode: Int, message: String) {
 		assertNotNull(response)
