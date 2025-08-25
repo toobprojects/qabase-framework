@@ -31,28 +31,27 @@ public class TodoApiJavaIT extends AbstractRestTest {
 
         // --- Fetch & verify a Task by ID ---
         Response taskResponse = step("Fetch a Task By Id", TodoFunctions.fetchById(TODO_ID_TO_UPDATE));
-        HttpSupport.expect(taskResponse)
+        Todo task = HttpSupport.expect(taskResponse)
                 .ok()
                 .fieldEq("id", 3)
                 .fieldEq("title", "fugiat veniam minus")
                 .fieldEq("completed", false)
                 .contentType(DEFAULT_CONTENT_TYPE)
                 .timeUnder(SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD)
-                .attach(); // attaches request/response to Allure Reports
+                .attach() // attaches request/response to Allure Reports
+                .as(Todo.class);
 
         // --- Update the Task & verify response ---
-        Todo task = taskResponse.as(Todo.class);
         Todo updated = task.copy(null, task.getUserId(), "Updated Task", true);
         Response updateResponse = step("Update Task #3 status via PUT",
                 TodoFunctions.updateById(TODO_ID_TO_UPDATE, updated));
-        HttpSupport.expect(taskResponse)
+        Todo updatedTask = HttpSupport.expect(updateResponse)
                 .ok()
                 .contentType(DEFAULT_CONTENT_TYPE)
                 .timeUnder(SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD)
-                .attach(); // attaches request/response to Allure Reports
+                .attach()
+                .as(Todo.class); // attaches request/response to Allure Reports
 
-        // --- Assert Java object mapping of response ---
-        Todo updatedTask = updateResponse.as(Todo.class);
         assertAll(
                 () -> assertNotNull(updatedTask),
                 () -> assertEquals(3, updatedTask.getId()),
@@ -72,7 +71,7 @@ public class TodoApiJavaIT extends AbstractRestTest {
         // Showcase: QABase fluent assertions (Java-friendly)
         HttpSupport.expect(deleteResp)
                 .ok()
-                .emptyOrSizeAtMost(1)               // JSONPlaceholder often returns {} or [] on delete
+                .emptyOrSizeAtMost(1)  // JSONPlaceholder often returns {} or [] on delete
                 .contentType(DEFAULT_CONTENT_TYPE)  // prove JSON round-trip
                 .timeUnder(2_000L);
     }

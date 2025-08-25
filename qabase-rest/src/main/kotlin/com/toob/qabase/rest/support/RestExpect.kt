@@ -2,6 +2,7 @@ package com.toob.qabase.rest.support
 
 import com.toob.qabase.core.AllureExtensions
 import com.toob.qabase.rest.RestModuleConstants
+import io.restassured.common.mapper.TypeRef
 import io.restassured.response.Response
 import org.hamcrest.Matchers
 
@@ -79,6 +80,32 @@ class RestExpect(private val response: Response) {
 	fun attachIf(condition: Boolean, name: String = "Response Body"): RestExpect {
 		if (condition) attach(name)
 		return this
+	}
+
+	/**
+	 * Terminal operation: deserialize the response body into the given type.
+	 *
+	 * Usage (Java):
+	 *   Todo todo = HttpSupport.expect(resp)
+	 *       .ok()
+	 *       .contentType("application/json")
+	 *       .attach()
+	 *       .as(Todo.class);
+	 */
+	fun <T> `as`(clazz: Class<T>): T {
+		return response.`as`(clazz)
+	}
+
+	/**
+	 * Terminal operation: deserialize the response body into the given generic type.
+	 *
+	 * Usage (Java with collections):
+	 *   List<Todo> todos = HttpSupport.expect(resp)
+	 *       .ok()
+	 *       .as(new TypeRef<List<Todo>>() {});
+	 */
+	fun <T> `as`(typeRef: TypeRef<T>): T {
+		return response.`as`(typeRef)
 	}
 
 	/** Expect HTTP status 200 OK */
