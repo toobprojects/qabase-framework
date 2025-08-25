@@ -8,10 +8,8 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import io.restassured.response.Response;
 import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.toob.qabase.core.AllureExtensions.step;
@@ -30,11 +28,14 @@ public class TodoApiJIT extends AbstractRestTest {
         // Verify the response
         Response taskResponse = step("Fetch a Task By Id", fetchById.apply(3));
         HttpSupport.allOkay(taskResponse);
-        assertResponse( taskResponse, 3, "fugiat veniam minus", false);
-        Todo task = taskResponse.as(Todo.class);
-        assertNotNull(task);
+        taskResponse.then()
+                .assertThat()
+                .body("id", equalTo(3))
+                .body("title", equalTo("fugiat veniam minus"))
+                .body("completed", equalTo(false));
 
         // Update the Task
+        Todo task = taskResponse.as(Todo.class);
         Todo updated = task.copy(null, task.getUserId(), "Updated Task", true);
         Response updateResponse = step("Update Task #3 status via PUT", updateById.apply(updated));
         HttpSupport.allOkay(updateResponse);
@@ -53,14 +54,6 @@ public class TodoApiJIT extends AbstractRestTest {
         HttpSupport.allOkay(response);
     }
 
-
-    private static void assertResponse(Response response, int id, String title, boolean status) {
-        response.then()
-                .assertThat()
-                .body("id", equalTo(id))
-                .body("title", equalTo(title))
-                .body("completed", equalTo(status));
-    }
 
     private static final Function<Integer, Function0<Response>> fetchById =
             taskId -> () -> RestClient.get("/todos/" + taskId);
