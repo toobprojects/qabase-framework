@@ -21,6 +21,7 @@ public class TodoApiJavaIT extends AbstractRestTest {
 
     private static final int TODO_ID_TO_UPDATE = 3;
     private static final int TODO_ID_TO_DELETE = 2;
+    public static final long SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD = 2_000L;
 
     @Test
     @SneakyThrows
@@ -28,28 +29,29 @@ public class TodoApiJavaIT extends AbstractRestTest {
     @Story("Update an existing TODO item")
     void updateTask() {
 
-        // Fetch a Task By Id
-        // Verify the response
+        // --- Fetch & verify a Task by ID ---
         Response taskResponse = step("Fetch a Task By Id", TodoFunctions.fetchById(TODO_ID_TO_UPDATE));
-        HttpSupport.allOkay(taskResponse);
         HttpSupport.expect(taskResponse)
+                .ok()
                 .fieldEq("id", 3)
                 .fieldEq("title", "fugiat veniam minus")
                 .fieldEq("completed", false)
                 .contentType(DEFAULT_CONTENT_TYPE)
-                .timeUnder(2_000L);
+                .timeUnder(SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD)
+                .attach(); // attaches request/response to Allure Reports
 
-        // Attach response to Allure report
-        HttpSupport.attachResponse(taskResponse);
-
-        // Update the Task
+        // --- Update the Task & verify response ---
         Todo task = taskResponse.as(Todo.class);
         Todo updated = task.copy(null, task.getUserId(), "Updated Task", true);
-        Response updateResponse = step("Update Task #3 status via PUT", TodoFunctions.updateById(TODO_ID_TO_UPDATE, updated));
-        HttpSupport.allOkay(updateResponse);
+        Response updateResponse = step("Update Task #3 status via PUT",
+                TodoFunctions.updateById(TODO_ID_TO_UPDATE, updated));
+        HttpSupport.expect(taskResponse)
+                .ok()
+                .contentType(DEFAULT_CONTENT_TYPE)
+                .timeUnder(SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD)
+                .attach(); // attaches request/response to Allure Reports
 
-        // Attach response to Allure report
-        HttpSupport.attachResponse(updateResponse);
+        // --- Assert Java object mapping of response ---
         Todo updatedTask = updateResponse.as(Todo.class);
         assertAll(
                 () -> assertNotNull(updatedTask),
@@ -64,11 +66,15 @@ public class TodoApiJavaIT extends AbstractRestTest {
     @DisplayName("DELETE /todos/{id} removes a TODO successfully")
     @Story("Delete a TODO item")
     void deleteTask() {
-        // Delete a Task
+        // --- Delete Task and verify response ---
         Response deleteResp = step("Removing a Task", TodoFunctions.deleteById(TODO_ID_TO_DELETE));
-        HttpSupport.allOkay(deleteResp);
-        HttpSupport.attachResponse(deleteResp);
-        deleteResp.then().body("size()", lessThanOrEqualTo(1));
+
+        // Showcase: QABase fluent assertions (Java-friendly)
+        HttpSupport.expect(deleteResp)
+                .ok()
+                .emptyOrSizeAtMost(1)               // JSONPlaceholder often returns {} or [] on delete
+                .contentType(DEFAULT_CONTENT_TYPE)  // prove JSON round-trip
+                .timeUnder(2_000L);
     }
 
 }
