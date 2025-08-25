@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 @Epic("JSONPlaceholder API Tests - Kotlin")
 @Feature("Fetch All & Create One TODOs API")
-class TodoApiKIt : AbstractRestTest() {
+class TodoApiKotlinIt : AbstractRestTest() {
 
 	companion object {
 		private val TASK_LIST_TYPE = object : TypeRef<List<Todo>>() {}
