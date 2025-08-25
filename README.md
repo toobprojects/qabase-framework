@@ -101,7 +101,15 @@ We keep **Semantic Versioning**. To change the **project/module versions** safel
 
 - **Version bump script & usage → [QABase - Version Bump Script Guide.md](docs/qabase-version-bump-script-guide.md)**
 
-> TL;DR: run from repo root, e.g. `./bump-version.sh 1.1.0 --tag --push`
+> run from repo root, e.g. `./bump-version.sh 1.1.0 --tag --push`
+
+### Prepare Release
+
+To perform the actual release You may refer to the script documented here:
+
+- **Release script → [QABase — Release Script Guide.md](docs/qabase-release-script-guide.md)**
+
+> run from repo root, e.g. `./bump-version.sh 1.1.0 --tag --push`
 
 ---
 
