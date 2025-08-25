@@ -4,7 +4,7 @@ import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.Selenide.switchTo
 import com.toob.qabase.core.AllureExtensions.step
 
-import com.toob.qabase.webui.dsl.Sel.byCss
+import com.toob.qabase.webui.dsl.Sel.css
 import io.qameta.allure.Step
 import org.springframework.stereotype.Component
 
@@ -19,14 +19,14 @@ class DemoBlazePage {
 
 	@Step("Click the \"Samsung galaxy s6\" device")
 	fun selectProduct(productId: Int) : DemoBlazePage {
-		byCss("a[href='prod.html?idp_=$productId']")
+		css("a[href='prod.html?idp_=$productId']")
 			.click()
 		return this
 	}
 
 	@Step("Click the Add to Card Button")
 	fun addToCart(productId: Int) : DemoBlazePage {
-		byCss("a[onclick='addToCart($productId)']")
+		css("a[onclick='addToCart($productId)']")
 			.click()
 		return this
 	}

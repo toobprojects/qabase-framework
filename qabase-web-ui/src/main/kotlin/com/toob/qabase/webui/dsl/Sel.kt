@@ -19,7 +19,7 @@ object Sel {
      * @return the opened page object
      */
     @JvmStatic
-    fun openBrowser() = open("/")
+    fun open() = open("/")
 
     /**
      * Finds a web element by its `name` attribute.
@@ -28,7 +28,7 @@ object Sel {
      * @return the found Selenide element
      */
     @JvmStatic
-    fun byName(name : String) = `$`(By.name(name))
+    fun name(name : String) = `$`(By.name(name))
 
     /**
      * Finds a web element by its `id` attribute.
@@ -37,7 +37,7 @@ object Sel {
      * @return the found Selenide element
      */
     @JvmStatic
-    fun byId(id : String) = `$`(By.id(id))
+    fun id(id : String) = `$`(By.id(id))
 
     /**
      * Finds a web element using a CSS selector.
@@ -46,7 +46,7 @@ object Sel {
      * @return the found Selenide element
      */
     @JvmStatic
-    fun byCss(link : String) = `$`(link)
+    fun css(link : String) = `$`(link)
 
     /**
      * Finds a collection of web elements by name or id selector.
@@ -55,6 +55,6 @@ object Sel {
      * @return the found Selenide element collection
      */
     @JvmStatic
-    fun eleCollection(nameOrId : String) = `$$`(nameOrId)
+    fun all(nameOrId : String) = `$$`(nameOrId)
 }
 
