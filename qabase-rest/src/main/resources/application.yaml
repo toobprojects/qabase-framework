@@ -6,6 +6,6 @@
 
 # CUSTOM APP
 # ======================================================================================================================
-rest-service:
-  token: yourtokehere
-  base-url: "https://jsonplaceholder.typicode.com"
+qabase:
+  rest:
+    base-url: "https://jsonplaceholder.typicode.com"
