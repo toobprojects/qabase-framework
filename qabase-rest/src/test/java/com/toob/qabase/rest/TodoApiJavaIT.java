@@ -1,6 +1,5 @@
 package com.toob.qabase.rest;
 
-import com.toob.qabase.rest.client.RestClient;
 import com.toob.qabase.rest.model.Todo;
 import com.toob.qabase.rest.support.HttpSupport;
 import io.qameta.allure.Epic;
@@ -11,13 +10,8 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import static com.toob.qabase.core.AllureExtensions.step;
-import static com.toob.qabase.rest.client.RestModuleConstants.DEFAULT_CONTENT_TYPE;
-import static org.hamcrest.Matchers.equalTo;
+import static com.toob.qabase.rest.RestModuleConstants.DEFAULT_CONTENT_TYPE;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
 

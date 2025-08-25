@@ -1,8 +1,8 @@
 package com.toob.qabase.rest
 
 import com.toob.qabase.QaBaseTest
-import com.toob.qabase.rest.client.RestModuleConstants.AUTHORIZATION
-import com.toob.qabase.rest.client.RestModuleConstants.BEARER
+import com.toob.qabase.rest.RestModuleConstants.AUTHORIZATION
+import com.toob.qabase.rest.RestModuleConstants.BEARER
 import com.toob.qabase.rest.support.HttpSupport
 import com.toob.qabase.rest.support.HttpSupport.serialisationConfig
 import io.restassured.RestAssured

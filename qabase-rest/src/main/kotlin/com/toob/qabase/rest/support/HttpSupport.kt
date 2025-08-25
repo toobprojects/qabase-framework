@@ -1,11 +1,10 @@
 package com.toob.qabase.rest.support
 
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.toob.qabase.core.AllureExtensions
 import com.toob.qabase.core.AllureExtensions.step
-import com.toob.qabase.rest.client.RestExpect
 import io.restassured.response.Response
 import kotlinx.serialization.json.Json
 import kotlin.test.assertNotNull

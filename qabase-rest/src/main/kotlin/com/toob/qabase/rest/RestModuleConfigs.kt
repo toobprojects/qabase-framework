@@ -1,6 +1,6 @@
 package com.toob.qabase.rest
 
-import com.toob.qabase.rest.client.RestModuleConstants.REST_SERVICE
+import com.toob.qabase.rest.RestModuleConstants.REST_SERVICE
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 /**

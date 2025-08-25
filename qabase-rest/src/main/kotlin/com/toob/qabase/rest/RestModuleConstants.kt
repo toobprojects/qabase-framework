@@ -1,5 +1,4 @@
-package com.toob.qabase.rest.client
-
+package com.toob.qabase.rest
 
 object RestModuleConstants {
     const val MEDIA_JSON = "application/json"
