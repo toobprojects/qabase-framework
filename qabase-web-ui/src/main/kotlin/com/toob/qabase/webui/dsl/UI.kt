@@ -10,6 +10,7 @@ import com.codeborne.selenide.WebDriverRunner
 import io.qameta.allure.Step
 import java.time.Duration
 import com.toob.qabase.core.AllureExtensions
+import com.toob.qabase.util.logger
 import io.qameta.allure.Allure
 
 /**
@@ -19,6 +20,8 @@ import io.qameta.allure.Allure
  * - On failure: auto-attach screenshot + page source to Allure.
  */
 object UI {
+
+	private var log = logger()
 
 
 	// ---------- tiny aliases (RestExpect feel) ----------
@@ -130,12 +133,12 @@ object UI {
 				?.inputStream()?.use {
 					Allure.addAttachment("Screenshot", "image/png", it, "png")
 				}
-		}
+		}.onFailure { log.error(it) { "Failed to capture screenshot" } }
 
 		// Capture the page source
 		runCatching {
 			val html = WebDriverRunner.getWebDriver().pageSource
 			Allure.addAttachment("Page Source", "text/html", html, ".html")
-		}
+		}.onFailure { log.error(it) { "Failed to capture pageSource" } }
 	}
 }
