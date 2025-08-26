@@ -3,11 +3,14 @@ package com.toob.qabase.webui.dsl
 import com.codeborne.selenide.Condition.*
 import com.codeborne.selenide.CollectionCondition.size
 import com.codeborne.selenide.Configuration
+import com.codeborne.selenide.Screenshots
 import com.codeborne.selenide.Selenide.*
 import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.WebDriverRunner
 import io.qameta.allure.Step
 import java.time.Duration
 import com.toob.qabase.core.AllureExtensions
+import io.qameta.allure.Allure
 
 /**
  * Minimal fluent DSL over Selenide:
@@ -16,25 +19,6 @@ import com.toob.qabase.core.AllureExtensions
  * - On failure: auto-attach screenshot + page source to Allure.
  */
 object UI {
-
-	// ----- tiny step wrapper with failure artifacts -----
-	private inline fun <T> step(name: String, crossinline body: () -> T): T {
-		return try {
-			AllureExtensions.step(name) { body() }
-		} catch (t: Throwable) {
-			try {
-				com.codeborne.selenide.Screenshots.takeScreenShotAsFile()
-					?.inputStream()?.use {
-						io.qameta.allure.Allure.addAttachment("Screenshot", "image/png", it, "png")
-					}
-			} catch (_: Throwable) {}
-			try {
-				val html = com.codeborne.selenide.WebDriverRunner.getWebDriver().pageSource
-				io.qameta.allure.Allure.addAttachment("Page Source", "text/html", html, ".html")
-			} catch (_: Throwable) {}
-			throw t
-		}
-	}
 
 	// ---------- Kotlin sugar (DSL-ish) ----------
 	data class Entering(val text: String)
@@ -118,4 +102,34 @@ object UI {
 
 	/** alias for shouldHaveCount */
 	@JvmStatic fun count(css: String, n: Int): UI = shouldHaveCount(css, n)
+
+
+	// ----- tiny step wrapper with failure artifacts -----
+	private inline fun <T> step(name: String, crossinline body: () -> T): T {
+		return try {
+			AllureExtensions.step(name) { body() }
+		} catch (t: Throwable) {
+			// Take Screenot and attach Page Source on failure
+			attachFailureArtifacts()
+			throw t
+		}
+	}
+
+	// ----- failure artifacts helper -----
+	private fun attachFailureArtifacts() {
+
+		// Capture the page source
+		runCatching {
+			Screenshots.takeScreenShotAsFile()
+				?.inputStream()?.use {
+					Allure.addAttachment("Screenshot", "image/png", it, "png")
+				}
+		}
+
+		// Capture the page source
+		runCatching {
+			val html = WebDriverRunner.getWebDriver().pageSource
+			Allure.addAttachment("Page Source", "text/html", html, ".html")
+		}
+	}
 }
