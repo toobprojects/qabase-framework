@@ -21,7 +21,7 @@ A lightweight, modular **JVM test automation framework** that gets teams product
 - **qabase-rest** – REST API test foundations built on **REST Assured** + Kotlin.
 - **qabase-web-ui** – Web UI test foundations built on **Selenide** (Selenium) with Allure integration.
 
-> Root coordinates (parent POM): `io.github.toobprojects:qabase-framework:1.0.1`
+> Root coordinates (parent POM): `io.github.toobprojects:qabase-framework:1.1.1`
 
 ---
 
@@ -47,21 +47,21 @@ Add only the modules you need.
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-core</artifactId>
-  <version>1.0.4</version>
+  <version>1.1.1</version>
 </dependency>
 
 <!-- API testing -->
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-rest</artifactId>
-  <version>1.0.4</version>
+  <version>1.1.1</version>
 </dependency>
 
 <!-- Web UI testing -->
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-web-ui</artifactId>
-  <version>1.0.4</version>
+  <version>1.1.1</version>
 </dependency>
 ```
 
@@ -69,9 +69,9 @@ Add only the modules you need.
 
 ```kotlin
 dependencies {
-  testImplementation("io.github.toobprojects:qabase-core:1.0.4")
-  testImplementation("io.github.toobprojects:qabase-rest:1.0.4")   // API testing
-  testImplementation("io.github.toobprojects:qabase-web-ui:1.0.4") // Web UI testing
+  testImplementation("io.github.toobprojects:qabase-core:1.1.1")
+  testImplementation("io.github.toobprojects:qabase-rest:1.1.1")   // API testing
+  testImplementation("io.github.toobprojects:qabase-web-ui:1.1.1") // Web UI testing
 }
 ```
 
