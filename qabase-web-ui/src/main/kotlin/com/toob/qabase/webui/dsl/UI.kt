@@ -20,6 +20,32 @@ import io.qameta.allure.Allure
  */
 object UI {
 
+
+	// ---------- tiny aliases (RestExpect feel) ----------
+	/** alias for clickCss */
+	@JvmStatic fun tap(css: String): UI = clickCss(css)
+
+	/** alias for typeInto */
+	@JvmStatic fun fill(css: String, value: String): UI = typeInto(css, value)
+
+	/** alias for visit */
+	@JvmStatic fun go(url: String): UI = visit(url)
+
+	/** alias for shouldSee */
+	@JvmOverloads
+	@JvmStatic fun see(css: String, expected: String, timeoutMs: Long = 4000): UI =
+		shouldSee(css, expected, timeoutMs)
+
+	/** alias for shouldBeVisible */
+	@JvmOverloads
+	@JvmStatic fun seeVisible(css: String, timeoutMs: Long = 4000): UI =
+		shouldBeVisible(css, timeoutMs)
+
+	/** alias for shouldHaveCount */
+	@JvmStatic fun count(css: String, n: Int): UI = shouldHaveCount(css, n)
+
+
+
 	// ---------- Kotlin sugar (DSL-ish) ----------
 	data class Entering(val text: String)
 	@JvmStatic fun type(text: String) = Entering(text)
@@ -35,6 +61,8 @@ object UI {
 	/** Kotlin: Sel.css("#toast").shouldHaveText("Welcome") */
 	infix fun SelenideElement.shouldHaveText(expected: String) =
 		step("""Expect "$expected" on $this""") { shouldHave(text(expected)) }
+
+
 
 	// ---------- Fluent (every method returns UI for chaining) ----------
 	@Step("Visit {url}")
@@ -80,28 +108,6 @@ object UI {
 		a.accept()
 	}
 
-	// ---------- tiny aliases (RestExpect feel) ----------
-	/** alias for clickCss */
-	@JvmStatic fun tap(css: String): UI = clickCss(css)
-
-	/** alias for typeInto */
-	@JvmStatic fun fill(css: String, value: String): UI = typeInto(css, value)
-
-	/** alias for visit */
-	@JvmStatic fun go(url: String): UI = visit(url)
-
-	/** alias for shouldSee */
-	@JvmOverloads
-	@JvmStatic fun see(css: String, expected: String, timeoutMs: Long = 4000): UI =
-		shouldSee(css, expected, timeoutMs)
-
-	/** alias for shouldBeVisible */
-	@JvmOverloads
-	@JvmStatic fun seeVisible(css: String, timeoutMs: Long = 4000): UI =
-		shouldBeVisible(css, timeoutMs)
-
-	/** alias for shouldHaveCount */
-	@JvmStatic fun count(css: String, n: Int): UI = shouldHaveCount(css, n)
 
 
 	// ----- tiny step wrapper with failure artifacts -----
