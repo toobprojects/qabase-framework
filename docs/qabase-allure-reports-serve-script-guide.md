@@ -44,9 +44,9 @@ This will:
 ---
 
 ## Outputs
-- Per‑module raw results: `qabase-*/target/allure-results/`
+- Per‑module raw results: `qabase-*/target/allure-results/`  
   (JSON + attachments created by tests)
-- **Aggregated HTML site**: `target/allure-reports-aggregate/`
+- **Aggregated HTML site**: `target/allure-reports-aggregate/`  
   Open `target/allure-reports-aggregate/index.html` directly, or rely on `allure serve`.
 
 ---
@@ -75,32 +75,32 @@ Upload `target/allure-reports-aggregate/` as a pipeline artifact.
 
 ## Troubleshooting
 
-**Allure CLI not found**
+**Allure CLI not found**  
 - Ensure `allure` is installed and on `PATH`. See **Prerequisites** above.
 
-**No `allure-results` found**
+**No `allure-results` found**  
 - Make sure your tests actually generate Allure results. Some modules/profiles may disable results.
 - Run module tests explicitly first to confirm results exist, e.g. `mvn -pl qabase-rest -am clean verify`.
 
-**Script fails on Maven**
+**Script fails on Maven**  
 - Check `mvn -v`. Ensure Java and Maven are correctly installed.
-- If your environment requires the Maven Wrapper, adjust the script or run:
+- If your environment requires the Maven Wrapper, adjust the script or run:  
   `./mvnw -pl qabase-core,qabase-rest,qabase-web-ui -am clean verify`
 
-**Port already in use when serving**
+**Port already in use when serving**  
 - `allure serve` chooses a port automatically; if it clashes, stop other `allure serve` instances or generate static HTML and open it directly.
 
 ---
 
 ## FAQ
 
-**Q: Can I aggregate only two modules?**
+**Q: Can I aggregate only two modules?**  
 A: The script automatically **skips modules without results**. To limit scope, run tests for the modules you care about or modify the `MODULES` array in the script.
 
-**Q: Where should I run the script from?**
+**Q: Where should I run the script from?**  
 A: Anywhere in the repo. The script resolves the repo root and `cd`s there before running Maven.
 
-**Q: Does this replace per‑module reports?**
+**Q: Does this replace per‑module reports?**  
 A: No. It complements them. For single‑module checks, open that module’s per‑module report or run only that module’s tests.
 
 ---

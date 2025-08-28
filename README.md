@@ -95,21 +95,16 @@ mvn allure:serve
 
 This spins up a local server with rich, navigable results (screenshots, attachments, steps).
 
-### Bump the version (SemVer)
+## Developer Tools (Bash scripts)
 
-We keep **Semantic Versioning**. To change the **project/module versions** safely (without touching dependency versions), use the script documented here:
+QABase ships with a small set of **developer productivity tools** — plain Bash scripts that standardize common tasks like versioning, testing, releasing, and reporting. Use these to avoid repeating boilerplate commands and to keep your workflow consistent across machines and teams.
 
-- **Version bump script & usage → [QABase - Version Bump Script Guide.md](docs/qabase-version-bump-script-guide.md)**
-
-> run from repo root, e.g. `./bump-version.sh 1.1.0 --tag --push`
-
-### Prepare Release
-
-To perform the actual release You may refer to the script documented here:
-
-- **Release script → [QABase — Release Script Guide.md](docs/qabase-release-script-guide.md)**
-
-> run from repo root, e.g. `./bump-version.sh 1.1.0 --tag --push`
+| Script | What it does | Guide |
+|---|---|---|
+| `bump-version.sh` | Bumps only the **project/module** versions (strict **SemVer**). Supports `--snapshot`, `--allow-dirty`, optional tag & push. Dependencies are **not** changed. | [Version Bump Script Guide](docs/qabase-version-bump-script-guide.md) |
+| `release.sh` | Runs a Maven **release deploy** using the wrapper if present (`./mvnw`) with the `release` profile. Clear, colored logs and non‑zero exit on failure. | [Release Script Guide](docs/qabase-release-script-guide.md) |
+| `test.sh` | Local **test runner**. Always executes from repo root, works with `mvnw` or `mvn`, supports `--module`, `--profile`, `--it` (failsafe), `--allure`, and `--jdk <path>`. | [Local Test Runner](docs/qabase-test-runner-script-guide.md) |
+| `scripts/allure-reports-serve.sh` | Builds all modules and serves a **combined Allure report** via the Allure CLI. Useful for aggregated results across Core/REST/Web UI. | [Allure Reports Guide](docs/qabase-allure-reports-serve-script-guide.md) |
 
 ---
 
