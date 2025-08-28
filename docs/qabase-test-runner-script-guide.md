@@ -143,13 +143,13 @@ chmod +x mvnw
 
 ## FAQ
 
-**Q: Does this modify versions or perform releases?**
+**Q: Does this modify versions or perform releases?**  
 A: No. This script only runs tests. For versions and releases, see the **Developer Tools** section in the README.
 
-**Q: Can I pass raw Maven flags?**
+**Q: Can I pass raw Maven flags?**  
 A: Not directly. Add commonly needed switches to the script or run the printed Maven command manually.
 
-**Q: Where should I run it from?**
+**Q: Where should I run it from?**  
 A: Anywhere inside the repo — the script resolves and moves to the **repo root** before running Maven.
 
 ---

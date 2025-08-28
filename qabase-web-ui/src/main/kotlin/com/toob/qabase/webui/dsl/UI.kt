@@ -3,11 +3,15 @@ package com.toob.qabase.webui.dsl
 import com.codeborne.selenide.Condition.*
 import com.codeborne.selenide.CollectionCondition.size
 import com.codeborne.selenide.Configuration
+import com.codeborne.selenide.Screenshots
 import com.codeborne.selenide.Selenide.*
 import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.WebDriverRunner
 import io.qameta.allure.Step
 import java.time.Duration
 import com.toob.qabase.core.AllureExtensions
+import com.toob.qabase.util.logger
+import io.qameta.allure.Allure
 
 /**
  * Minimal fluent DSL over Selenide:
@@ -17,24 +21,33 @@ import com.toob.qabase.core.AllureExtensions
  */
 object UI {
 
-	// ----- tiny step wrapper with failure artifacts -----
-	private inline fun <T> step(name: String, crossinline body: () -> T): T {
-		return try {
-			AllureExtensions.step(name) { body() }
-		} catch (t: Throwable) {
-			try {
-				com.codeborne.selenide.Screenshots.takeScreenShotAsFile()
-					?.inputStream()?.use {
-						io.qameta.allure.Allure.addAttachment("Screenshot", "image/png", it, "png")
-					}
-			} catch (_: Throwable) {}
-			try {
-				val html = com.codeborne.selenide.WebDriverRunner.getWebDriver().pageSource
-				io.qameta.allure.Allure.addAttachment("Page Source", "text/html", html, ".html")
-			} catch (_: Throwable) {}
-			throw t
-		}
-	}
+	private var log = logger()
+
+
+	// ---------- tiny aliases (RestExpect feel) ----------
+	/** alias for clickCss */
+	@JvmStatic fun tap(css: String): UI = clickCss(css)
+
+	/** alias for typeInto */
+	@JvmStatic fun fill(css: String, value: String): UI = typeInto(css, value)
+
+	/** alias for visit */
+	@JvmStatic fun go(url: String): UI = visit(url)
+
+	/** alias for shouldSee */
+	@JvmOverloads
+	@JvmStatic fun see(css: String, expected: String, timeoutMs: Long = 4000): UI =
+		shouldSee(css, expected, timeoutMs)
+
+	/** alias for shouldBeVisible */
+	@JvmOverloads
+	@JvmStatic fun seeVisible(css: String, timeoutMs: Long = 4000): UI =
+		shouldBeVisible(css, timeoutMs)
+
+	/** alias for shouldHaveCount */
+	@JvmStatic fun count(css: String, n: Int): UI = shouldHaveCount(css, n)
+
+
 
 	// ---------- Kotlin sugar (DSL-ish) ----------
 	data class Entering(val text: String)
@@ -51,6 +64,8 @@ object UI {
 	/** Kotlin: Sel.css("#toast").shouldHaveText("Welcome") */
 	infix fun SelenideElement.shouldHaveText(expected: String) =
 		step("""Expect "$expected" on $this""") { shouldHave(text(expected)) }
+
+
 
 	// ---------- Fluent (every method returns UI for chaining) ----------
 	@Step("Visit {url}")
@@ -96,26 +111,34 @@ object UI {
 		a.accept()
 	}
 
-	// ---------- tiny aliases (RestExpect feel) ----------
-	/** alias for clickCss */
-	@JvmStatic fun tap(css: String): UI = clickCss(css)
 
-	/** alias for typeInto */
-	@JvmStatic fun fill(css: String, value: String): UI = typeInto(css, value)
 
-	/** alias for visit */
-	@JvmStatic fun go(url: String): UI = visit(url)
+	// ----- tiny step wrapper with failure artifacts -----
+	private inline fun <T> step(name: String, crossinline body: () -> T): T {
+		return try {
+			AllureExtensions.step(name) { body() }
+		} catch (t: Throwable) {
+			// Take Screenot and attach Page Source on failure
+			attachFailureArtifacts()
+			throw t
+		}
+	}
 
-	/** alias for shouldSee */
-	@JvmOverloads
-	@JvmStatic fun see(css: String, expected: String, timeoutMs: Long = 4000): UI =
-		shouldSee(css, expected, timeoutMs)
+	// ----- failure artifacts helper -----
+	private fun attachFailureArtifacts() {
 
-	/** alias for shouldBeVisible */
-	@JvmOverloads
-	@JvmStatic fun seeVisible(css: String, timeoutMs: Long = 4000): UI =
-		shouldBeVisible(css, timeoutMs)
+		// Capture the page source
+		runCatching {
+			Screenshots.takeScreenShotAsFile()
+				?.inputStream()?.use {
+					Allure.addAttachment("Screenshot", "image/png", it, "png")
+				}
+		}.onFailure { log.error(it) { "Failed to capture screenshot" } }
 
-	/** alias for shouldHaveCount */
-	@JvmStatic fun count(css: String, n: Int): UI = shouldHaveCount(css, n)
+		// Capture the page source
+		runCatching {
+			val html = WebDriverRunner.getWebDriver().pageSource
+			Allure.addAttachment("Page Source", "text/html", html, ".html")
+		}.onFailure { log.error(it) { "Failed to capture pageSource" } }
+	}
 }

@@ -55,29 +55,39 @@
 
         <rest-assured.version>5.5.6</rest-assured.version>
         <kotlinx-serialization-json.version>1.8.0</kotlinx-serialization-json.version>
-        <allure.version>2.29.1</allure.version>
         <aspectj.version>1.9.22.1</aspectj.version>
         <selenide.version>7.9.4</selenide.version>
+        <allure.version>2.29.0</allure.version>
+        <allure.report.version>2.34.1</allure.report.version>
+        <allure-maven.version>2.15.2</allure-maven.version>
 
         <apache-commons-lang.version>3.18.0</apache-commons-lang.version>
         <apache-commons-collection.version>4.5.0</apache-commons-collection.version>
+        <apache-commons-text.version>1.14.0</apache-commons-text.version>
         <apache-commons-text.version>1.14.0</apache-commons-text.version>
         <apache-commons-compression.version>1.28.0</apache-commons-compression.version>
 
         <kotlin-logger-jvm-slf4j.version>7.0.7</kotlin-logger-jvm-slf4j.version>
 
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
         <byte-buddy-agent.version>1.17.5</byte-buddy-agent.version>
         <maven-ant-run.version>3.1.0</maven-ant-run.version>
-        <allure-maven.version>2.29.1</allure-maven.version>
 
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version>
         <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
+
+        <!-- Shared report/artifact directories -->
+        <allure.results.dir>${project.build.directory}/allure-results</allure.results.dir>
+        <allure.report.dir>${project.build.directory}/allure-reports</allure.report.dir>
+        <allure.home.dir>${project.build.directory}/.allure</allure.home.dir>
+        <selenide.reports.dir>${project.build.directory}/selenide-reports</selenide.reports.dir>
+        <selenide.downloads.dir>${project.build.directory}/downloads</selenide.downloads.dir>
+        <selenide.headless>true</selenide.headless>
     </properties>
 
 
@@ -126,7 +136,7 @@
             <dependency>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-junit5</artifactId>
-                <version>${allure-maven.version}</version>
+                <version>${allure.version}</version>
             </dependency>
 
             <!-- REST Assured -->
@@ -368,20 +378,15 @@
                         -->
                         -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
                     </argLine>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${allure.results.dir}</allure.results.directory>
+                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
+                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
+                        <selenide.headless>${selenide.headless}</selenide.headless>
+                    </systemPropertyVariables>
                     <useModulePath>false</useModulePath>
                     <printSummary>true</printSummary>
                     <reportFormat>brief</reportFormat>
-                    <systemProperties>
-                        <property>
-                            <name>allure.results.directory</name>
-                            <value>${project.build.directory}/allure-results</value>
-                        </property>
-                        <!-- Enable Selenide Headless Mode -->
-                        <property>
-                            <name>selenide.headless</name>
-                            <value>true</value>
-                        </property>
-                    </systemProperties>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -402,6 +407,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
+                    </argLine>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${allure.results.dir}</allure.results.directory>
+                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
+                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
+                        <selenide.headless>${selenide.headless}</selenide.headless>
+                    </systemPropertyVariables>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -419,41 +436,23 @@
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
-                <version>2.15.2</version>
+                <version>${allure-maven.version}</version>
                 <configuration>
-                    <reportVersion>${allure.version}</reportVersion>
-                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
-                    <reportDirectory>${project.build.directory}/allure-reports</reportDirectory>
+                    <reportVersion>${allure.report.version}</reportVersion>
+                    <resultsDirectory>${allure.results.dir}</resultsDirectory>
+                    <reportDirectory>${allure.report.dir}</reportDirectory>
+<!--                    <allureHome>${allure.home.dir}</allureHome>-->
                 </configuration>
-            </plugin>
-
-            <!--
-            Maven Ant Run Plugin
-                • Creates Required Directories for Allure Reports
-                • Ensures Allure directories exist before running tests.
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${maven-ant-run.version}</version>
                 <executions>
                     <execution>
-                        <id>create-allure-results-directory</id>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <target>
-                                <mkdir dir="${project.build.directory}/allure-results"/>
-                                <mkdir dir="${project.build.directory}/allure-reports"/>
-                            </target>
-                        </configuration>
+                        <id>allure-generate</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-
-
         </plugins>
     </build>
 
@@ -558,7 +557,6 @@
                             <!-- <autoPublish>true</autoPublish> -->
                         </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
