@@ -21,19 +21,19 @@ A lightweight, modular **JVM test automation framework** that gets teams product
 - **qabase-rest** – REST API test foundations built on **REST Assured** + Kotlin.
 - **qabase-web-ui** – Web UI test foundations built on **Selenide** (Selenium) with Allure integration.
 
-> Root coordinates (parent POM): `io.github.toobprojects:qabase-framework:1.1.1`
+> Root coordinates (parent POM): `io.github.toobprojects:qabase-framework:1.2.0`
 
 ---
 
 ## Tech stack
 
-- **Java 21+**, **Kotlin 2.x**
+- **[Java 17+](docs.oracle.com/en/java/javase/17/migrate/significant-changes-jdk-release.html#GUID-561005C1-12BB-455C-AD41-00455CAD23A6)**, **Kotlin 2.x**
 - **JUnit 5**
-- **Spring Boot 3.4.x** (test utilities & wiring)
-- **REST Assured** (API testing)
-- **Selenide** (Web UI testing)
+- **[Spring Boot 3.5.4](https://spring.io/blog/2025/07/24/spring-boot-3-5-4-available-now)** (test utilities & wiring)
+- **[REST Assured](https://rest-assured.io/)** (API testing)
+- **[Selenide](https://selenide.org/)** (Web UI testing)
 - **Kotlin Serialization**
-- **Allure Reports**
+- **[Allure Reports](https://allurereport.org/)**
 
 ---
 
@@ -47,21 +47,21 @@ Add only the modules you need.
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-core</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
 </dependency>
 
 <!-- API testing -->
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-rest</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
 </dependency>
 
 <!-- Web UI testing -->
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-web-ui</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -69,9 +69,9 @@ Add only the modules you need.
 
 ```kotlin
 dependencies {
-  testImplementation("io.github.toobprojects:qabase-core:1.1.1")
-  testImplementation("io.github.toobprojects:qabase-rest:1.1.1")   // API testing
-  testImplementation("io.github.toobprojects:qabase-web-ui:1.1.1") // Web UI testing
+  testImplementation("io.github.toobprojects:qabase-core:1.2.0")
+  testImplementation("io.github.toobprojects:qabase-rest:1.2.0")   // API testing
+  testImplementation("io.github.toobprojects:qabase-web-ui:1.2.0") // Web UI testing
 }
 ```
 
