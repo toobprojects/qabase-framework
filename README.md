@@ -111,7 +111,7 @@ QABase ships with a small set of **developer productivity tools** — plain Bash
 ## Roadmap (short list)
 
 - Docusaurus-powered documentation site (cookbooks, recipes, CI examples)
-- Example projects for REST & Web UI (end-to-end flows)
+- Example tests for REST & Web UI (end-to-end flows)
 - Maven Central badges & starter templates
 
 ---
