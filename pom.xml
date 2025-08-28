@@ -55,10 +55,11 @@
 
         <rest-assured.version>5.5.6</rest-assured.version>
         <kotlinx-serialization-json.version>1.8.0</kotlinx-serialization-json.version>
-        <allure.version>2.29.0</allure.version>
-        <allure.report.version>2.34.1</allure.report.version>
         <aspectj.version>1.9.22.1</aspectj.version>
         <selenide.version>7.9.4</selenide.version>
+        <allure.version>2.29.0</allure.version>
+        <allure.report.version>2.34.1</allure.report.version>
+        <allure-maven.version>2.15.2</allure-maven.version>
 
         <apache-commons-lang.version>3.18.0</apache-commons-lang.version>
         <apache-commons-collection.version>4.5.0</apache-commons-collection.version>
@@ -73,13 +74,20 @@
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
         <byte-buddy-agent.version>1.17.5</byte-buddy-agent.version>
         <maven-ant-run.version>3.1.0</maven-ant-run.version>
-        <allure-maven.version>2.15.2</allure-maven.version>
 
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version>
         <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
+
+        <!-- Shared report/artifact directories -->
+        <allure.results.dir>${project.build.directory}/allure-results</allure.results.dir>
+        <allure.report.dir>${project.build.directory}/allure-reports</allure.report.dir>
+        <allure.home.dir>${project.build.directory}/.allure</allure.home.dir>
+        <selenide.reports.dir>${project.build.directory}/selenide-reports</selenide.reports.dir>
+        <selenide.downloads.dir>${project.build.directory}/downloads</selenide.downloads.dir>
+        <selenide.headless>true</selenide.headless>
     </properties>
 
 
@@ -371,8 +379,10 @@
                         -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
                     </argLine>
                     <systemPropertyVariables>
-                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
-                        <selenide.headless>true</selenide.headless>
+                        <allure.results.directory>${allure.results.dir}</allure.results.directory>
+                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
+                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
+                        <selenide.headless>${selenide.headless}</selenide.headless>
                     </systemPropertyVariables>
                     <useModulePath>false</useModulePath>
                     <printSummary>true</printSummary>
@@ -403,8 +413,10 @@
                         -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
                     </argLine>
                     <systemPropertyVariables>
-                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
-                        <selenide.headless>true</selenide.headless>
+                        <allure.results.directory>${allure.results.dir}</allure.results.directory>
+                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
+                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
+                        <selenide.headless>${selenide.headless}</selenide.headless>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>
@@ -427,8 +439,9 @@
                 <version>${allure-maven.version}</version>
                 <configuration>
                     <reportVersion>${allure.report.version}</reportVersion>
-                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
-                    <reportDirectory>${project.build.directory}/allure-reports</reportDirectory>
+                    <resultsDirectory>${allure.results.dir}</resultsDirectory>
+                    <reportDirectory>${allure.report.dir}</reportDirectory>
+<!--                    <allureHome>${allure.home.dir}</allureHome>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -440,10 +453,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-
-
-
         </plugins>
     </build>
 
@@ -548,7 +557,6 @@
                             <!-- <autoPublish>true</autoPublish> -->
                         </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
