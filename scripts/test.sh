@@ -1,162 +1,24 @@
-# QABase – Local Test Runner (`test.sh`)
+#!/usr/bin/env bash
 
-A fast, predictable way to run **local tests from the repo root** before you push, open a PR, or merge to `master`. The script works with either **Maven Wrapper** (`./mvnw`) or your system **Maven** (`mvn`), and provides helpful flags for module selection, profiles, integration tests, Allure viewing, and JDK override.
+# ================================================================================================================
+# QA Base – Local test runner
+# Author: Thabo Lebogang Matjuda
+# Updated: 21 Aug 2025
+# ------------------------------------------------------------------------------------------------
+# Goals
+#  - Always run Maven from the repo root (avoids "no POM in this directory" errors)
+#  - Work with either mvnw or system mvn
+#  - Helpful flags for module/profile/IT-only/Allure/JDK override
+#  - Safe defaults & clear logging
+# ================================================================================================================
 
----
+set -euo pipefail
 
-## Why use this script?
-- Always runs from the **repository root** (avoids "no POM in this directory" errors).
-- Works with `./mvnw` if present, otherwise falls back to `mvn`.
-- Sensible defaults and **clear logging**.
-- Short flags for common workflows: **unit tests**, **integration tests**, **module-only**, **profiles**, **Allure**.
-
----
-
-## Quick Start
-
-```bash
-# run all unit tests across the repo (Surefire)
-./test.sh
-
-# run integration tests (Failsafe)
-./test.sh --it
-
-# open Allure after the run (requires Allure CLI installed)
-./test.sh --allure
-```
-
-> Tip: combine flags, e.g. `./test.sh --module qabase-rest --profile ci --it --allure`
-
----
-
-## Options
-
-| Option | Description |
-|---|---|
-| `--module <name>` | Run tests only for a specific Maven module (e.g., `qabase-rest`). Uses `-pl <module> -am`. |
-| `--profile <name>` | Activate a Maven profile (e.g., `ci`, `headless`). Equivalent to `-P <profile>`. |
-| `--it` | Run **integration tests** using **Failsafe**: `clean verify -DskipITs=false -DskipTests`. |
-| `--allure` | After tests, try to open the **Allure** report via the CLI (`allure serve`). |
-| `--jdk <path>` | Temporarily use a specific JDK: sets `JAVA_HOME` and prepends `PATH`. |
-| `-h`, `--help` | Show usage help and exit. |
-
-The script logs the resolved repo root, current Java and Maven versions, and the exact Maven command it executes.
-
----
-
-## Common Workflows
-
-### 1) Full local sanity check (before pushing)
-```bash
-./test.sh
-```
-Runs: `mvn clean test -DskipTests=false` across all modules.
-
-### 2) Verify integration scenarios
-```bash
-./test.sh --it
-```
-Runs: `mvn clean verify -DskipITs=false -DskipTests` (Failsafe). Use this when your project separates ITs from unit tests.
-
-### 3) Focus on a single module
-```bash
-./test.sh --module qabase-rest
-```
-Runs that module (and any required dependencies) only.
-
-### 4) Use a profile (e.g., CI/headless)
-```bash
-./test.sh --profile ci
-```
-Activates `-P ci` for the whole run.
-
-### 5) Open Allure after tests
-```bash
-./test.sh --allure
-```
-Searches for the first `allure-results` directory (depth ≤ 3) and runs `allure serve`.
-
-### 6) Combine everything
-```bash
-./test.sh --module qabase-rest --profile headless --it --allure
-```
-Great for debugging one area with a specific profile and viewing results immediately.
-
-### 7) Temporarily use a specific JDK
-```bash
-./test.sh --jdk /Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home
-```
-Useful when you have multiple JDKs installed.
-
----
-
-## What the script actually runs
-
-The script builds a Maven command with:
-- Colorized output: `--color=always -Dstyle.color=always`
-- Quiet mode for noise reduction: `-q` (you still see failures)
-- Profiles via `-P <profile>` when provided
-- Module targeting via `-pl <module> -am` when provided
-- Goals:
-  - **Unit tests**: `clean test -DskipTests=false`
-  - **Integration tests**: `clean verify -DskipITs=false -DskipTests`
-
-It prints the exact command before executing so you can copy/paste it if needed.
-
----
-
-## Allure notes
-- `--allure` requires the **Allure CLI** to be on your PATH.
-- The script looks for the **first** `allure-results` folder (up to 3 levels deep). If none is found, you’ll see a helpful error.
-- For **aggregated** reports across modules, prefer the dedicated helper: `scripts/allure-reports-serve.sh` (see the Allure guide).
-
----
-
-## Exit codes
-- **0**: success (all tests passed)
-- **non‑zero**: a failure occurred (test failures, build errors, missing tools, etc.)
-
-Use the exit code in pre‑commit hooks or local CI scripts if desired.
-
----
-
-## Troubleshooting
-
-**“Permission denied” running `mvnw`**
-```bash
-chmod +x mvnw
-```
-
-**Maven/Java not found**
-- Ensure `mvn` or `./mvnw` is available.
-- Check `java -version` prints correctly.
-- If needed, use `--jdk <path>` to point to a specific JDK.
-
-**Allure CLI not found**
-- Install per https://docs.qameta.io/allure/ and ensure `allure` is on your PATH.
-
-**No `allure-results` found**
-- Make sure your tests actually generate Allure results.
-- Some modules/profiles may disable Allure; try without `--profile` or run the aggregated report script.
-
----
-
-## FAQ
-
-**Q: Does this modify versions or perform releases?**
-A: No. This script only runs tests. For versions and releases, see the **Developer Tools** section in the README.
-
-**Q: Can I pass raw Maven flags?**
-A: Not directly. Add commonly needed switches to the script or run the printed Maven command manually.
-
-**Q: Where should I run it from?**
-A: Anywhere inside the repo — the script resolves and moves to the **repo root** before running Maven.
-
----
-
-## Command reference (from `./test.sh --help`)
-
-```text
+# --- utils ---------------------------------------------------------------------------------------
+log()  { printf "\033[1;36m[TEST]\033[0m %s\n" "$*"; }
+err()  { printf "\033[1;31m[ERR ]\033[0m %s\n" "$*" 1>&2; }
+usage(){
+  cat <<'USAGE'
 Usage: ./test.sh [options]
 
 Options:
@@ -173,8 +35,103 @@ Examples:
   ./test.sh --profile ci         # activate CI profile
   ./test.sh --it                 # run integration tests (failsafe)
   ./test.sh --allure             # open Allure after
-```
+USAGE
+}
 
----
+# --- find repo root & mvn ------------------------------------------------------------------------
+# Resolve script dir, then repo root (git if available, else parent of script)
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+if git -C "$SCRIPT_DIR" rev-parse --show-toplevel &>/dev/null; then
+  REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)"
+else
+  # Assume the script is placed in repo root (fallback)
+  REPO_ROOT="$SCRIPT_DIR"
+fi
+cd "$REPO_ROOT"
 
-**Happy testing!** If you need enhancements (extra flags, different defaults), propose an update and keep the guide in sync.
+# Prefer Maven Wrapper if present
+if [[ -x "$REPO_ROOT/mvnw" ]]; then
+  MVN="$REPO_ROOT/mvnw"
+else
+  MVN="mvn"
+fi
+
+# --- parse args ----------------------------------------------------------------------------------
+MODULE=""
+PROFILE=""
+RUN_IT=false
+OPEN_ALLURE=false
+JDK_HOME=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --module)
+      MODULE="$2"; shift 2;;
+    --profile)
+      PROFILE="$2"; shift 2;;
+    --it)
+      RUN_IT=true; shift;;
+    --allure)
+      OPEN_ALLURE=true; shift;;
+    --jdk)
+      JDK_HOME="$2"; shift 2;;
+    -h|--help)
+      usage; exit 0;;
+    *)
+      err "Unknown option: $1"; usage; exit 1;;
+  esac
+done
+
+# --- JDK override --------------------------------------------------------------------------------
+if [[ -n "$JDK_HOME" ]]; then
+  export JAVA_HOME="$JDK_HOME"
+  export PATH="$JAVA_HOME/bin:$PATH"
+  log "Using JAVA_HOME=$JAVA_HOME"
+fi
+
+# --- info ----------------------------------------------------------------------------------------
+log "Repo root: $REPO_ROOT"
+log "Java: $(java -version 2>&1 | head -n1)"
+log "Maven: $($MVN -v | head -n1)"
+
+# --- build command -------------------------------------------------------------------------------
+MVN_ARGS=("-q" "--color=always" "-Dstyle.color=always")
+
+if [[ -n "$PROFILE" ]]; then
+  MVN_ARGS+=("-P" "$PROFILE")
+fi
+
+if [[ -n "$MODULE" ]]; then
+  # run just the selected module
+  MVN_GOAL=("-pl" "$MODULE" "-am")
+else
+  MVN_GOAL=( )
+fi
+
+if [[ "$RUN_IT" == true ]]; then
+  # Failsafe (integration tests)
+  GOALS=("clean" "verify" "-DskipITs=false" "-DskipTests")
+else
+  # Surefire (unit tests)
+  GOALS=("clean" "test" "-DskipTests=false")
+fi
+
+log "Running: $MVN ${MVN_ARGS[*]} ${MVN_GOAL[*]} ${GOALS[*]}"
+$MVN "${MVN_ARGS[@]}" ${MVN_GOAL[@]} ${GOALS[@]}
+
+# --- Allure --------------------------------------------------------------------------------------
+if [[ "$OPEN_ALLURE" == true ]]; then
+  if command -v allure >/dev/null 2>&1; then
+    RESULTS_DIR="$(find . -type d -name allure-results -maxdepth 3 | head -n1 || true)"
+    if [[ -n "$RESULTS_DIR" ]]; then
+      log "Opening Allure report for: $RESULTS_DIR"
+      allure serve "$RESULTS_DIR"
+    else
+      err "No allure-results directory found. Did tests generate results?"
+    fi
+  else
+    err "Allure CLI not found. Install from https://docs.qameta.io/allure/"
+  fi
+fi
+
+log "Done."
