@@ -181,17 +181,17 @@
             <dependency>
                 <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-core</artifactId>
-                <version>1.2.0</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-rest</artifactId>
-                <version>1.2.0</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-web-ui</artifactId>
-                <version>1.2.0</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -538,6 +538,7 @@
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
+                                        <passphraseServerId>gpg.passphrase</passphraseServerId>
                                     </gpgArguments>
                                 </configuration>
                             </execution>
