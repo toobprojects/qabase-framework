@@ -1,7 +1,9 @@
 package com.toob.qabase.events
 
+import com.toob.qabase.CoreModuleConstants
 import com.toob.qabase.util.ReportCompressor
 import com.toob.qabase.util.logger
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.event.ContextClosedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -9,10 +11,22 @@ import java.io.File
 
 /**
  * Listener that reacts to Spring's ContextClosedEvent to archive Allure test results.
+ *
+ * This bean is **conditionally loaded** using `@ConditionalOnProperty`.
+ * Set `qabase.reports.archive.enabled=true` (e.g., in `application.yml` or as an env var
+ * `QABASE_REPORTS_ARCHIVE_ENABLED=true`) to enable archiving. By default this listener
+ * is **disabled** to avoid zipping on every test run.
+ *
  * Upon context shutdown, it compresses the Allure results directory into a timestamped
  * `.tar.gz` file inside the `target/` directory, using the ReportCompressor utility.
  */
 @Component
+@ConditionalOnProperty(
+	prefix = CoreModuleConstants.CONFIG_REPORTS_ARCHIVE,
+	name = ["enabled"],
+	havingValue = "true",
+	matchIfMissing = false
+)
 class ReportArchiverListener {
 
 	companion object {
@@ -42,7 +56,7 @@ class ReportArchiverListener {
 		// Resolve the project root directory from system property
 		val projectRoot = File(System.getProperty(USER_DIR))
 		// Compute input Allure results folder and output compressed archive file paths
-		val allureReportFolder = File(projectRoot, ALLURE_REPORTS_DIR)
+		val allureReportFolder = File(projectRoot, "${TARGET_DIR}/${ALLURE_REPORTS_DIR}")
 		val outputZip = File(projectRoot, "${TARGET_DIR}/${ReportCompressor.defaultTarGzFileName()}")
 
 		// Check if Allure results folder exists before compressing
