@@ -429,31 +429,6 @@
                 </executions>
             </plugin>
 
-            <!--
-            Allure Reporting Maven Plugin
-                •	Generates Allure test reports from test execution data.
-            -->
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure-maven.version}</version>
-                <configuration>
-                    <reportVersion>${allure.report.version}</reportVersion>
-                    <resultsDirectory>${allure.results.dir}</resultsDirectory>
-                    <reportDirectory>${allure.report.dir}</reportDirectory>
-<!--                    <allureHome>${allure.home.dir}</allureHome>-->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>allure-generate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Adding Java source roots alongside Kotlin across all child modules -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -494,6 +469,47 @@
 
 
     <profiles>
+        <profile>
+            <id>allure-report</id>
+            <activation>
+                <property>
+                    <name>allure</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!--
+                        Allure Reporting Maven Plugin
+                        Generates Allure test reports from test execution data.
+                    -->
+                    <plugin>
+                        <groupId>io.qameta.allure</groupId>
+                        <artifactId>allure-maven</artifactId>
+                        <version>${allure-maven.version}</version>
+                        <configuration>
+                            <reportVersion>${allure.report.version}</reportVersion>
+                            <resultsDirectory>${allure.results.dir}</resultsDirectory>
+                            <reportDirectory>${allure.report.dir}</reportDirectory>
+<!--                            <allureHome>${allure.home.dir}</allureHome>-->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>allure-generate</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+
+
         <!-- Release profile: only signs artifacts when explicitly enabled -->
         <profile>
             <id>release</id>
@@ -582,8 +598,9 @@
                     </plugin>
 
                     <!-- Publishes to Sonatype Central (the successor to Nexus Staging).
-                 `extensions=true` wires it into Maven's lifecycle.
-                 `publishingServerId` must match credentials in ~/.m2/settings.xml. -->
+                        `extensions=true` wires it into Maven's lifecycle.
+                        `publishingServerId` must match credentials in ~/.m2/settings.xml.
+                    -->
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
