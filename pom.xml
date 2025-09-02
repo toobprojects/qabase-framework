@@ -491,7 +491,6 @@
                             <reportVersion>${allure.report.version}</reportVersion>
                             <resultsDirectory>${allure.results.dir}</resultsDirectory>
                             <reportDirectory>${allure.report.dir}</reportDirectory>
-<!--                            <allureHome>${allure.home.dir}</allureHome>-->
                         </configuration>
                         <executions>
                             <execution>
@@ -506,8 +505,6 @@
                 </plugins>
             </build>
         </profile>
-
-
 
 
         <!-- Release profile: only signs artifacts when explicitly enabled -->
