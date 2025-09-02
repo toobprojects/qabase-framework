@@ -64,7 +64,6 @@
         <apache-commons-lang.version>3.18.0</apache-commons-lang.version>
         <apache-commons-collection.version>4.5.0</apache-commons-collection.version>
         <apache-commons-text.version>1.14.0</apache-commons-text.version>
-        <apache-commons-text.version>1.14.0</apache-commons-text.version>
         <apache-commons-compression.version>1.28.0</apache-commons-compression.version>
 
         <kotlin-logger-jvm-slf4j.version>7.0.7</kotlin-logger-jvm-slf4j.version>
@@ -72,6 +71,7 @@
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
+        <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <byte-buddy-agent.version>1.17.5</byte-buddy-agent.version>
         <maven-ant-run.version>3.1.0</maven-ant-run.version>
 
@@ -450,6 +450,42 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Adding Java source roots alongside Kotlin across all child modules -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
+                <executions>
+                    <!-- Ensure main Java sources are compiled in addition to src/main/kotlin -->
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+
+                    <!-- Ensure test Java sources are compiled in addition to src/test/kotlin -->
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/test/java</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

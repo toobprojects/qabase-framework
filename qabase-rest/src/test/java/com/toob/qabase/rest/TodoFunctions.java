@@ -1,7 +1,7 @@
 package com.toob.qabase.rest;
 
 import com.toob.qabase.rest.client.RestClient;
-import com.toob.qabase.rest.model.Todo;
+import com.toob.qabase.rest.model.Task;
 import io.restassured.response.Response;
 
 import java.util.function.Supplier;
@@ -28,7 +28,7 @@ public class TodoFunctions {
     }
 
     /** Update a Task by id with the given payload */
-    public static Supplier<Response> updateById(int taskId, Todo task) {
+    public static Supplier<Response> updateById(int taskId, Task task) {
         return () -> RestClient.put(TODOS_PATH + taskId, task);
     }
 

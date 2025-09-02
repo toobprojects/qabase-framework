@@ -1,6 +1,6 @@
 package com.toob.qabase.rest;
 
-import com.toob.qabase.rest.model.Todo;
+import com.toob.qabase.rest.model.Task;
 import com.toob.qabase.rest.support.HttpSupport;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import static com.toob.qabase.core.AllureExtensions.step;
 import static com.toob.qabase.rest.RestModuleConstants.DEFAULT_CONTENT_TYPE;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("JSONPlaceholder API Tests - Java")
@@ -31,7 +30,7 @@ public class TodoApiJavaIT extends AbstractRestTest {
 
         // --- Fetch & verify a Task by ID ---
         Response taskResponse = step("Fetch a Task By Id", TodoFunctions.fetchById(TODO_ID_TO_UPDATE));
-        Todo task = HttpSupport.expect(taskResponse)
+        Task task = HttpSupport.expect(taskResponse)
                 .ok()
                 .fieldEq("id", 3)
                 .fieldEq("title", "fugiat veniam minus")
@@ -39,24 +38,24 @@ public class TodoApiJavaIT extends AbstractRestTest {
                 .contentType(DEFAULT_CONTENT_TYPE)
                 .timeUnder(SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD)
                 .attach() // attaches request/response to Allure Reports
-                .as(Todo.class);
+                .as(Task.class);
 
         // --- Update the Task & verify response ---
-        Todo updated = task.copy(null, task.getUserId(), "Updated Task", true);
+        Task updated = new Task(task.getId(), task.getUserId(), "Updated Task", true);
         Response updateResponse = step("Update Task #3 status via PUT",
                 TodoFunctions.updateById(TODO_ID_TO_UPDATE, updated));
-        Todo updatedTask = HttpSupport.expect(updateResponse)
+        Task updatedTask = HttpSupport.expect(updateResponse)
                 .ok()
                 .contentType(DEFAULT_CONTENT_TYPE)
                 .timeUnder(SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD)
                 .attach()
-                .as(Todo.class); // attaches request/response to Allure Reports
+                .as(Task.class); // attaches request/response to Allure Reports
 
         assertAll(
                 () -> assertNotNull(updatedTask),
                 () -> assertEquals(3, updatedTask.getId()),
                 () -> assertEquals("Updated Task", updatedTask.getTitle()),
-                () -> assertTrue(updatedTask.getCompleted())
+                () -> assertTrue(updatedTask.isCompleted())
         );
 
     }
