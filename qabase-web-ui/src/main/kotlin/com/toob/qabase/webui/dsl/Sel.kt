@@ -2,6 +2,7 @@ package com.toob.qabase.webui.dsl
 
 import com.codeborne.selenide.Selenide.`$`
 import com.codeborne.selenide.Selenide.`$$`
+import com.codeborne.selenide.Selenide.`$x`
 import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ElementsCollection
@@ -33,4 +34,7 @@ object Sel {
 	/** Elements found inside a scope (CSS within CSS). */
 	@JvmStatic fun inAll(scopeCss: String, childCss: String): ElementsCollection =
 		css(scopeCss).findAll(childCss)
+
+    /** Find by XPath expression. */
+    @JvmStatic fun xpath(expression: String): SelenideElement = `$x`(expression)
 }

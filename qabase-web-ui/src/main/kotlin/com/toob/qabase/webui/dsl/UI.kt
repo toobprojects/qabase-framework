@@ -2,11 +2,17 @@ package com.toob.qabase.webui.dsl
 
 import com.codeborne.selenide.Condition.*
 import com.codeborne.selenide.CollectionCondition.size
+import com.codeborne.selenide.CollectionCondition.sizeGreaterThan
+import com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual
+import com.codeborne.selenide.CollectionCondition.sizeLessThan
+import com.codeborne.selenide.CollectionCondition.sizeLessThanOrEqual
 import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.Screenshots
+import com.codeborne.selenide.Selenide
 import com.codeborne.selenide.Selenide.*
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.WebDriverRunner
+import com.codeborne.selenide.ClickOptions
 import io.qameta.allure.Step
 import java.time.Duration
 import com.toob.qabase.core.AllureExtensions
@@ -94,6 +100,24 @@ object UI {
 		apply { Sel.css(css).shouldHave(text(expected), Duration.ofMillis(timeoutMs)) }
 
 	@JvmOverloads
+	@Step("Expect text {text} visible anywhere in body: {text}")
+	@JvmStatic
+	fun shouldSeeText(text: String, timeoutMs: Long = Configuration.timeout): UI = apply {
+		// Only search within the BODY so we don’t accidentally match <title> etc. in HEAD
+		Sel.xpath("//body//*[contains(normalize-space(.), '$text')]")
+			.shouldBe(visible, Duration.ofMillis(timeoutMs))
+	}
+
+	@JvmOverloads
+	@JvmStatic
+	@Step("Expect text (ignore case): {text}")
+	fun shouldSeeTextIgnoreCase(text: String, timeoutMs: Long = Configuration.timeout): UI = apply {
+		val t = text.lowercase()
+		`$x`("//*[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '$t')]")
+			.shouldBe(visible, Duration.ofMillis(timeoutMs))
+	}
+
+	@JvmOverloads
 	@Step("Expect CSS {css} is visible (timeoutMs={timeoutMs})")
 	@JvmStatic fun shouldBeVisible(css: String, timeoutMs: Long = Configuration.timeout): UI =
 		apply { Sel.css(css).shouldBe(visible, Duration.ofMillis(timeoutMs)) }
@@ -102,6 +126,22 @@ object UI {
 	@JvmStatic fun shouldHaveCount(css: String, count: Int): UI =
 		apply { Sel.all(css).shouldHave(size(count)) }
 
+	@Step("Expect CSS {css} count > {threshold}")
+	@JvmStatic fun shouldHaveCountGreaterThan(css: String, threshold: Int): UI =
+		apply { Sel.all(css).shouldHave(sizeGreaterThan(threshold)) }
+
+	@Step("Expect CSS {css} count <= {max}")
+	@JvmStatic fun shouldHaveCountAtMost(css: String, max: Int): UI =
+		apply { Sel.all(css).shouldHave(sizeLessThanOrEqual(max)) }
+
+	@Step("Expect CSS {css} count < {threshold}")
+	@JvmStatic fun shouldHaveCountLessThan(css: String, threshold: Int): UI =
+		apply { Sel.all(css).shouldHave(sizeLessThan(threshold)) }
+
+	@Step("Expect CSS {css} count >= {min}")
+	@JvmStatic fun shouldHaveCountAtLeast(css: String, min: Int): UI =
+		apply { Sel.all(css).shouldHave(sizeGreaterThanOrEqual(min)) }
+
 	@Step("Expect alert contains '{expected}' and accept")
 	@JvmStatic fun expectAlertContains(expected: String): UI = apply {
 		val a = switchTo().alert()
@@ -109,6 +149,36 @@ object UI {
 			"Alert text <${a.text}> did not contain <$expected>"
 		}
 		a.accept()
+	}
+
+	@JvmOverloads
+	@JvmStatic
+	@Step("Clear CSS {css}")
+	fun clear(css: String, timeoutMs: Long = Configuration.timeout): UI = apply {
+		Sel.css(css).shouldBe(visible, Duration.ofMillis(timeoutMs)).clear()
+	}
+
+	@JvmOverloads
+	@JvmStatic
+	@Step("Clear element")
+	fun clear(el: SelenideElement, timeoutMs: Long = Configuration.timeout): UI = apply {
+		el.shouldBe(visible, Duration.ofMillis(timeoutMs)).clear()
+	}
+
+	@Step("Scroll into view (center): {css}")
+	@JvmStatic fun scrollIntoView(css: String): UI = apply {
+		Sel.css(css).scrollIntoView("{behavior: \"instant\", block: \"center\", inline: \"center\"}")
+	}
+
+	@Step("Scroll element into view (center)")
+	@JvmStatic fun scrollIntoView(el: SelenideElement): UI = apply {
+		el.scrollIntoView("{behavior: \"instant\", block: \"center\", inline: \"center\"}")
+	}
+
+	@Step("Click via JS: {css}")
+	@JvmStatic
+	fun clickCssJs(css: String): UI = apply {
+		Sel.css(css).shouldBe(enabled).click(ClickOptions.usingJavaScript())
 	}
 
 
