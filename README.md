@@ -87,7 +87,17 @@ cd qabase-framework
 mvn -q -DskipTests=false test
 ```
 
-### Generate a local Allure report
+### Generate reports
+
+```bash
+# 1) Property-based activation (auto-activates the profile)
+mvn clean verify -Dallure.reports=true
+
+# 2) Profile by ID (sets the same property under the hood)
+mvn clean verify -Pallure-reports
+```
+
+### Server a local Allure report
 
 ```bash
 mvn allure:serve
