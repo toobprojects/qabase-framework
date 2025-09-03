@@ -1,5 +1,6 @@
 package com.toob.qabase.core
 
+import com.toob.qabase.CoreModuleConstants
 import com.toob.qabase.util.FileOps
 import com.toob.qabase.util.ReportCompressor
 import com.toob.qabase.util.logger
@@ -42,11 +43,16 @@ object AllureExtensions {
     @JvmStatic
     fun <T> step( description: String, action: () -> T): T {
 
-        // Wrap the provided action inside an Allure ThrowableRunnable (captures errors)
-        val throwableRunnable = Allure.ThrowableRunnable { action() }
+		return if (allureEnabled() && allureLifecycleActive()) {
+			// Wrap the provided action inside an Allure ThrowableRunnable (captures errors)
+			val throwableRunnable = Allure.ThrowableRunnable { action() }
 
-        // Log the step description and execute the action
-        return Allure.step( description, throwableRunnable)
+			// Log the step description and execute the action
+			return Allure.step( description, throwableRunnable)
+		} else {
+			action()
+		}
+
     }
 
 	/**
@@ -54,10 +60,14 @@ object AllureExtensions {
 	 */
 	@JvmStatic
 	fun <T> step( description: String, supplier: Supplier<T>): T {
-		return Allure.step(
-			description,
-			Allure.ThrowableRunnable { supplier.get() }
-		)
+		return if (allureEnabled() && allureLifecycleActive()) {
+			Allure.step(
+				description,
+				Allure.ThrowableRunnable { supplier.get() }
+			)
+		} else {
+			supplier.get()
+		}
 	}
 
 
@@ -72,12 +82,13 @@ object AllureExtensions {
      */
     @JvmStatic
     fun attachText( title: String, body: String) {
+		if (!allureEnabled() && allureLifecycleActive()) return
 		body.let {
 			Allure.addAttachment(
-				title,   // Attachment title in the report
-				MEDIA_TYPE_TEXT,  // Specify TEXT format
-				body,   // Body of the Attachment
-				EXT_TEXT // File extension type
+				title,                // Attachment title in the report
+				MEDIA_TYPE_TEXT,      // Correct media type for text
+				body,                 // Attachment body
+				EXT_TEXT              // File extension
 			)
 		}
 	}
@@ -94,52 +105,45 @@ object AllureExtensions {
      */
     @JvmStatic
     fun attachJson( title: String, body: String) {
+		if (!allureEnabled() && allureLifecycleActive()) return
 		body.let {
 			Allure.addAttachment(
-				title,   // Attachment title in the report
-				MEDIA_TYPE_JSON,  // Specify JSON format
-				body,   // Body of the Attachment
-				EXT_JSON // File extension type
+				title,                // Attachment title in the report
+				MEDIA_TYPE_JSON,      // Specify JSON format
+				body,                 // Body of the attachment
+				EXT_JSON              // File extension type
 			)
 		}
 	}
 
 
+	/**
+	 * Runtime switch for Allure integration.
+	 *
+	 * This returns `true` when either of these JVM system properties are set in the *test JVM*:
+	 * 1. `-Dallure=on` — quick/legacy toggle (CLI friendly)
+	 * 2. `-Dqabase.allure.enabled=true` — **preferred** toggle, enabled automatically by the
+	 *    `allure-reports` Maven profile via surefire/failsafe `<systemPropertyVariables>`.
+	 *
+	 * When this method returns `false` (the default), all QABase Allure helpers are **no-ops**:
+	 * - `step(...)` executes the block but does not create a report step
+	 * - `attachText(...)` / `attachJson(...)` do nothing
+	 * - `zipReportsTo(...)` short‑circuits
+	 *
+	 * This allows us to keep Allure API imports at compile time without producing
+	 * `allure-results/` unless the user explicitly opts in.
+	 */
+	private fun allureEnabled(): Boolean =
+		System.getProperty(CoreModuleConstants.PROP_ALLURE_REPORTS) == "true"
 
-    /**
-     * Compresses the "allure-reports" directory into a zip archive at the specified [targetDir].
-     *
-     * This method is intended to snapshot the Allure report output after test execution, making it easier
-     * for QA engineers to archive, share, or upload the reports. If [targetDir] is not specified,
-     * it defaults to the user's downloads directory.
-     *
-     * The method logs an error if the "allure-reports" directory does not exist, and logs info upon
-     * successful compression including the path to the generated zip file.
-     *
-     * @param targetDir Destination directory for the zip archive. Defaults to the downloads folder.
-     */
-    @JvmStatic
-    fun zipReportsTo(targetDir: File = FileOps.downloads()) {
-        val allureDir = File(ALLURE_RESULTS_DIR_NAME)
+	/**
+	 * Returns true if an active Allure test case is running in the current thread.
+	 * This prevents lifecycle errors when calling Allure helpers outside a test context.
+	 */
+	private fun allureLifecycleActive(): Boolean =
+		runCatching { Allure.getLifecycle().currentTestCase.isPresent }
+			.getOrDefault(false)
 
-        // Check if the "allure-reports" directory exists and is a directory
-        if (!allureDir.exists() || !allureDir.isDirectory) {
-            log.error{"⚠️ $ALLURE_RESULTS_DIR_NAME folder not found in: ${allureDir.absolutePath}"}
-            return
-        }
 
-        // Create the target directory if it does not exist
-        if (!targetDir.exists()) {
-            targetDir.mkdirs()
-        }
-
-        // Prepare the output zip file with timestamped name
-        val archiveName = "allure-${REPORTS_TIME_STAMP_FORMAT.format(Date())}.zip"
-        val output = File(targetDir, archiveName)
-
-        // Compress the allure-reports directory into the output zip file
-        ReportCompressor.zipDirectory(allureDir, output)
-        log.info{"✅ Allure report zipped to: ${output.absolutePath}"}
-    }
 
 }

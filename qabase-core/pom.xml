@@ -31,12 +31,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
-        <!-- KOTLIN LOGGING ( Kotlin wrapper for SLF4J ) -->
-        <dependency>
-            <groupId>io.github.oshai</groupId>
-            <artifactId>kotlin-logging-jvm</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

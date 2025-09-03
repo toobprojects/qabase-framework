@@ -88,6 +88,7 @@
         <selenide.reports.dir>${project.build.directory}/selenide-reports</selenide.reports.dir>
         <selenide.downloads.dir>${project.build.directory}/downloads</selenide.downloads.dir>
         <selenide.headless>true</selenide.headless>
+        <allure.reports.enabled>true</allure.reports.enabled>
     </properties>
 
 
@@ -137,6 +138,15 @@
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-junit5</artifactId>
                 <version>${allure.version}</version>
+            </dependency>
+
+            <!-- Compile against Allure API without enabling runtime reporting by default -->
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-java-commons</artifactId>
+                <version>${allure.version}</version>
+                <scope>provided</scope> <!-- compile with it, don’t package it. -->
+                <optional>true</optional> <!-- don’t auto-export this to other projects, let them decide if they need it -->
             </dependency>
 
             <!-- REST Assured -->
@@ -235,7 +245,13 @@
         <!-- ALLURE -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
+            <artifactId>allure-java-commons</artifactId>
+        </dependency>
+
+        <!-- KOTLIN LOGGING ( Kotlin wrapper for SLF4J ) -->
+        <dependency>
+            <groupId>io.github.oshai</groupId>
+            <artifactId>kotlin-logging-jvm</artifactId>
         </dependency>
     </dependencies>
 
@@ -428,36 +444,100 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!--
-            Allure Reporting Maven Plugin
-                •	Generates Allure test reports from test execution data.
-            -->
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure-maven.version}</version>
-                <configuration>
-                    <reportVersion>${allure.report.version}</reportVersion>
-                    <resultsDirectory>${allure.results.dir}</resultsDirectory>
-                    <reportDirectory>${allure.report.dir}</reportDirectory>
-<!--                    <allureHome>${allure.home.dir}</allureHome>-->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>allure-generate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
 
     <profiles>
+
+        <!--
+            Generate Allure HTML report ONLY when explicitly enabled.
+            Usage:
+              # Single module
+              mvn clean verify -Pallure-reports
+
+              # Or via a property (same effect)
+              mvn clean verify -Dallure=on
+            Notes:
+              - Do NOT run on default mvn clean install.
+              - Results are produced by your test framework during test phases;
+                this profile only builds the pretty HTML.
+        -->
+        <profile>
+            <id>allure-reports</id>
+
+            <!-- Activate when explicitly requested -->
+            <activation>
+                <!-- Property-based activation: -Dallure=on -->
+                <property>
+                    <name>allure.reports</name>
+                    <value>true</value>
+                </property>
+                <!-- No activeByDefault: stays off for normal builds -->
+            </activation>
+
+            <dependencies>
+                <!-- ALLURE -->
+                <dependency>
+                    <groupId>io.qameta.allure</groupId>
+                    <artifactId>allure-junit5</artifactId>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <allure.results.directory>${allure.results.dir}</allure.results.directory>
+                                <!-- This line makes allureEnabled() return true in unit tests -->
+                                <allure.reports>${allure.reports.enabled}</allure.reports>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${maven-failsafe-plugin.version}</version>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <allure.results.directory>${allure.results.dir}</allure.results.directory>
+                                <!-- This line makes allureEnabled() return true in ITs -->
+                                <allure.reports>${allure.reports.enabled}</allure.reports>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <!--
+                        Allure Reporting Maven Plugin Generates Allure test reports from test execution data.
+                    -->
+                    <plugin>
+                        <groupId>io.qameta.allure</groupId>
+                        <artifactId>allure-maven</artifactId>
+                        <version>${allure-maven.version}</version>
+                        <configuration>
+                            <reportVersion>${allure.report.version}</reportVersion>
+                            <resultsDirectory>${allure.results.dir}</resultsDirectory>
+                            <reportDirectory>${allure.report.dir}</reportDirectory>
+                            <!--                    <allureHome>${allure.home.dir}</allureHome>-->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>allure-generate</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
         <!-- Release profile: only signs artifacts when explicitly enabled -->
         <profile>
             <id>release</id>

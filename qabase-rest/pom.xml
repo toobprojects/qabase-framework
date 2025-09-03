@@ -42,6 +42,7 @@
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
 
+
         <!-- QA BASE Custom Libraries -->
         <dependency>
             <groupId>io.github.toobprojects</groupId>
