@@ -5,7 +5,7 @@
 
     <groupId>io.github.toobprojects</groupId>
     <artifactId>qabase-framework</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
     <packaging>pom</packaging>
     <name>QABase Framework [POM]</name>
     <description>
@@ -191,17 +191,17 @@
             <dependency>
                 <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-core</artifactId>
-                <version>1.3.0</version>
+                <version>1.3.1</version>
             </dependency>
             <dependency>
                 <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-rest</artifactId>
-                <version>1.3.0</version>
+                <version>1.3.1</version>
             </dependency>
             <dependency>
                 <groupId>io.github.toobprojects</groupId>
                 <artifactId>qabase-web-ui</artifactId>
-                <version>1.3.0</version>
+                <version>1.3.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
