@@ -3,6 +3,8 @@
 
 A lightweight, modular **JVM test automation framework** that gets teams productive fast—without rebuilding the same plumbing on every project. QABase standardizes the boring bits (bootstrapping, test wiring, reporting, CI-ready structure) so you can focus on **real test logic**.
 
+- 📘 **Published Docs:** [qabase-docs](https://toobprojects.github.io/qabase-docs)
+
 ---
 
 ## Why QABase?
@@ -39,41 +41,25 @@ A lightweight, modular **JVM test automation framework** that gets teams product
 
 ## Use it as a dependency
 
-Add only the modules you need.
+Add only the modules you need. For example, to use `qabase-core`:
 
 ### Maven
-
 ```xml
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-core</artifactId>
   <version>1.4.1</version>
 </dependency>
-
-<!-- API testing -->
-<dependency>
-  <groupId>io.github.toobprojects</groupId>
-  <artifactId>qabase-rest</artifactId>
-  <version>1.4.1</version>
-</dependency>
-
-<!-- Web UI testing -->
-<dependency>
-  <groupId>io.github.toobprojects</groupId>
-  <artifactId>qabase-web-ui</artifactId>
-  <version>1.4.1</version>
-</dependency>
 ```
 
 ### Gradle (Kotlin DSL)
-
 ```kotlin
 dependencies {
   testImplementation("io.github.toobprojects:qabase-core:1.4.1")
-  testImplementation("io.github.toobprojects:qabase-rest:1.4.1")   // API testing
-  testImplementation("io.github.toobprojects:qabase-web-ui:1.4.1") // Web UI testing
 }
 ```
+
+For full installation instructions (including REST and Web UI modules, Maven/Gradle examples, and advanced setup), see the [Installation Guide](https://toobprojects.github.io/qabase-docs/docs/installation).
 
 ---
 
