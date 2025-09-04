@@ -145,8 +145,6 @@
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-java-commons</artifactId>
                 <version>${allure.version}</version>
-                <scope>provided</scope> <!-- compile with it, don’t package it. -->
-                <optional>true</optional> <!-- don’t auto-export this to other projects, let them decide if they need it -->
             </dependency>
 
             <!-- REST Assured -->
@@ -240,12 +238,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
             <version>${kotlin.version}</version>
-        </dependency>
-
-        <!-- ALLURE -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-java-commons</artifactId>
         </dependency>
 
         <!-- KOTLIN LOGGING ( Kotlin wrapper for SLF4J ) -->
