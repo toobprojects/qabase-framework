@@ -1,13 +1,9 @@
 package com.toob.qabase.core
 
 import com.toob.qabase.CoreModuleConstants
-import com.toob.qabase.util.FileOps
-import com.toob.qabase.util.ReportCompressor
 import com.toob.qabase.util.logger
 import io.qameta.allure.Allure
-import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.function.Supplier
 
 
@@ -82,7 +78,7 @@ object AllureExtensions {
      */
     @JvmStatic
     fun attachText( title: String, body: String) {
-		if (!allureEnabled() && allureLifecycleActive()) return
+		if (!allureEnabled() || !inAllureTest()) return
 		body.let {
 			Allure.addAttachment(
 				title,                // Attachment title in the report
@@ -105,7 +101,7 @@ object AllureExtensions {
      */
     @JvmStatic
     fun attachJson( title: String, body: String) {
-		if (!allureEnabled() && allureLifecycleActive()) return
+		if (!allureEnabled() || !inAllureTest()) return
 		body.let {
 			Allure.addAttachment(
 				title,                // Attachment title in the report
@@ -133,17 +129,40 @@ object AllureExtensions {
 	 * This allows us to keep Allure API imports at compile time without producing
 	 * `allure-results/` unless the user explicitly opts in.
 	 */
-	public fun allureEnabled(): Boolean =
+	fun allureEnabled(): Boolean =
 		System.getProperty(CoreModuleConstants.PROP_ALLURE_REPORTS) == "true"
 
 	/**
 	 * Returns true if an active Allure test case is running in the current thread.
 	 * This prevents lifecycle errors when calling Allure helpers outside a test context.
 	 */
-	public fun allureLifecycleActive(): Boolean =
+	fun allureLifecycleActive(): Boolean =
 		runCatching { Allure.getLifecycle().currentTestCase.isPresent }
 			.getOrDefault(false)
 
+	/**
+	 * Determines whether the current thread is inside an active Allure test case or step.
+	 *
+	 * Why this is needed:
+	 * - Allure throws lifecycle errors if we try to attach artifacts or create steps
+	 *   when no test/step context is running.
+	 * - Some versions of Allure expose `getCurrentStep()` while others do not, so we use reflection
+	 *   to call it safely without breaking compatibility.
+	 *
+	 * @return true if the current thread is within an Allure test case or an Allure step, false otherwise.
+	 */
+	fun inAllureTest(): Boolean {
+	    val lc = Allure.getLifecycle()
+	    // Present in all supported Allure versions
+	    val inCase = runCatching { lc.currentTestCase.isPresent }.getOrDefault(false)
+	    // `getCurrentStep()` is not available in some versions; resolve reflectively
+	    val inStep = runCatching {
+	        val m = lc.javaClass.getMethod("getCurrentStep")
+	        val opt = m.invoke(lc) as java.util.Optional<*>
+	        opt.isPresent
+	    }.getOrDefault(false)
+	    return inCase || inStep
+	}
 
 
 }

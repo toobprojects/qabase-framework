@@ -43,6 +43,7 @@ object HttpSupport {
 	@JvmStatic
 	fun attachResponse(response: Response) {
         // Convert the response body to a pretty JSON string
+		if (!AllureExtensions.allureEnabled() || !AllureExtensions.inAllureTest()) return
 		val responseBodyJson = response.body().asPrettyString()
 		if (responseBodyJson.isNotBlank()) {
 			AllureExtensions.attachJson("Response Body", responseBodyJson)
