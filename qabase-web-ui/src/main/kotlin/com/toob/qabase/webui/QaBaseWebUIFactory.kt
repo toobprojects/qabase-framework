@@ -3,6 +3,7 @@ package com.toob.qabase.webui
 import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.logevents.LogEventListener
 import com.codeborne.selenide.logevents.SelenideLogger
+import com.toob.qabase.core.AllureExtensions
 import io.qameta.allure.selenide.AllureSelenide
 import jakarta.annotation.PostConstruct
 import org.springframework.boot.SpringBootConfiguration
@@ -47,14 +48,20 @@ class QaBaseWebUIFactory(private val webUIConfigs: WebUIConfigs) {
         // Set Selenide headless mode from configuration
         Configuration.headless = webUIConfigs.headless
 
-        // Register AllureSelenide listener for enhanced Allure reporting with screenshots and page sources
-		runCatching<LogEventListener?> { SelenideLogger.removeListener("AllureSelenide") }
-        SelenideLogger.addListener(
-            "AllureSelenide",
-            AllureSelenide()
-                .screenshots(true)
-                .savePageSource(true)
-                .includeSelenideSteps(true)
-        )
+		// Register AllureSelenide listener for enhanced Allure reporting with screenshots and page sources
+        registerAllureSelenide()
     }
+
+	private fun registerAllureSelenide() {
+		if (!AllureExtensions.allureEnabled()) return
+		// Register AllureSelenide listener for enhanced Allure reporting with screenshots and page sources
+		runCatching<LogEventListener?> { SelenideLogger.removeListener("AllureSelenide") }
+		SelenideLogger.addListener(
+			"AllureSelenide",
+			AllureSelenide()
+				.screenshots(true)
+				.savePageSource(true)
+				.includeSelenideSteps(true)
+		)
+	}
 }

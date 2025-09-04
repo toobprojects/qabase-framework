@@ -133,14 +133,14 @@ object AllureExtensions {
 	 * This allows us to keep Allure API imports at compile time without producing
 	 * `allure-results/` unless the user explicitly opts in.
 	 */
-	private fun allureEnabled(): Boolean =
+	public fun allureEnabled(): Boolean =
 		System.getProperty(CoreModuleConstants.PROP_ALLURE_REPORTS) == "true"
 
 	/**
 	 * Returns true if an active Allure test case is running in the current thread.
 	 * This prevents lifecycle errors when calling Allure helpers outside a test context.
 	 */
-	private fun allureLifecycleActive(): Boolean =
+	public fun allureLifecycleActive(): Boolean =
 		runCatching { Allure.getLifecycle().currentTestCase.isPresent }
 			.getOrDefault(false)
 
