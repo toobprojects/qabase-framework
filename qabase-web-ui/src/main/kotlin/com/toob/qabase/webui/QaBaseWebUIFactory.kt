@@ -4,6 +4,7 @@ import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.logevents.LogEventListener
 import com.codeborne.selenide.logevents.SelenideLogger
 import com.toob.qabase.core.AllureExtensions
+import com.toob.qabase.support.OSSupport
 import io.qameta.allure.selenide.AllureSelenide
 import jakarta.annotation.PostConstruct
 import org.springframework.boot.SpringBootConfiguration
@@ -40,6 +41,7 @@ class QaBaseWebUIFactory(private val webUIConfigs: WebUIConfigs) {
 		// Set Selenide base URL from configuration
 		Configuration.baseUrl = webUIConfigs.baseUrl
         // Set Selenide browser type (e.g., chrome, firefox) from configuration
+		OSSupport.validateBrowserOnOS(webUIConfigs.browser)
         Configuration.browser = webUIConfigs.browser
         // Set Selenide timeout value from configuration
         Configuration.timeout = webUIConfigs.timeout

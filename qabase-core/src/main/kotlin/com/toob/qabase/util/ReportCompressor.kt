@@ -52,7 +52,7 @@ object ReportCompressor {
 	// === Utility Method 2: TAR.GZ (Best for Linux/macOS and CI tools like Jenkins) ===
 	fun tarGzipDirectory(sourceDir: File, outputTarGz: File) {
 		if (!sourceDir.exists() || !sourceDir.isDirectory) {
-			log.error("[TAR.GZ] Source folder does not exist: ${sourceDir.absolutePath}")
+			log.error{"[TAR.GZ] Source folder does not exist: ${sourceDir.absolutePath}"}
 			return
 		}
 
