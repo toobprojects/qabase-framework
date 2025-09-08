@@ -1,7 +1,6 @@
 package com.toob.qabase.rest;
 
 import com.toob.qabase.rest.client.RestClient;
-import com.toob.qabase.rest.model.Task;
 import io.restassured.response.Response;
 
 import java.util.function.Supplier;

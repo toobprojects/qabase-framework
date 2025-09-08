@@ -1,0 +1,28 @@
+
+
+     QQQQQQQQQ                    AAA                    BBBBBBBBBBBBBBBBB
+   QQ:::::::::QQ                 A:::A                   B::::::::::::::::B
+ QQ:::::::::::::QQ              A:::::A                  B::::::BBBBBB:::::B
+Q:::::::QQQ:::::::Q            A:::::::A                 BB:::::B     B:::::B
+Q::::::O   Q::::::Q           A:::::::::A                  B::::B     B:::::B  aaaaaaaaaaaaa      ssssssssss       eeeeeeeeeeee
+Q:::::O     Q:::::Q          A:::::A:::::A                 B::::B     B:::::B  a::::::::::::a   ss::::::::::s    ee::::::::::::ee
+Q:::::O     Q:::::Q         A:::::A A:::::A                B::::BBBBBB:::::B   aaaaaaaaa:::::ass:::::::::::::s  e::::::eeeee:::::ee
+Q:::::O     Q:::::Q        A:::::A   A:::::A               B:::::::::::::BB             a::::as::::::ssss:::::se::::::e     e:::::e
+Q:::::O     Q:::::Q       A:::::A     A:::::A              B::::BBBBBB:::::B     aaaaaaa:::::a s:::::s  ssssss e:::::::eeeee::::::e
+Q:::::O     Q:::::Q      A:::::AAAAAAAAA:::::A             B::::B     B:::::B  aa::::::::::::a   s::::::s      e:::::::::::::::::e
+Q:::::O  QQQQ:::::Q     A:::::::::::::::::::::A            B::::B     B:::::B a::::aaaa::::::a      s::::::s   e::::::eeeeeeeeeee
+Q::::::O Q::::::::Q    A:::::AAAAAAAAAAAAA:::::A           B::::B     B:::::Ba::::a    a:::::assssss   s:::::s e:::::::e
+Q:::::::QQ::::::::Q   A:::::A             A:::::A        BB:::::BBBBBB::::::Ba::::a    a:::::as:::::ssss::::::se::::::::e
+ QQ::::::::::::::Q   A:::::A               A:::::A       B:::::::::::::::::B a:::::aaaa::::::as::::::::::::::s  e::::::::eeeeeeee
+   QQ:::::::::::Q   A:::::A                 A:::::A      B::::::::::::::::B   a::::::::::aa:::as:::::::::::ss    ee:::::::::::::e
+     QQQQQQQQ::::QQAAAAAAA                   AAAAAAA     BBBBBBBBBBBBBBBBB     aaaaaaaaaa  aaaa sssssssssss        eeeeeeeeeeeeee
+             Q:::::Q
+              QQQQQQ
+
+
+${application.title} : v${application.version}
+By TOOB Projects!
+
+
+------------------------------------------------------------------------------
+

@@ -1,12 +1,10 @@
 package com.toob.qabase.rest;
 
-import com.toob.qabase.rest.model.Task;
 import com.toob.qabase.rest.support.HttpSupport;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import io.restassured.response.Response;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +21,6 @@ public class TodoApiJavaIT extends AbstractRestTest {
     public static final long SERVICE_LEVEL_AGREEMENT_RESPONSE_TIME_THRESHOLD = 2_000L;
 
     @Test
-    @SneakyThrows
     @DisplayName("PUT /todos/{id} should echo updated fields")
     @Story("Update an existing TODO item")
     void updateTask() {

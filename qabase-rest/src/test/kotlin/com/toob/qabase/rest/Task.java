@@ -1,4 +1,4 @@
-package com.toob.qabase.rest.model;
+package com.toob.qabase.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
