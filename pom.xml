@@ -9,7 +9,8 @@
     <packaging>pom</packaging>
     <name>QABase Framework [POM]</name>
     <description>
-        QABase is a lightweight, modular JVM automation testing framework (JUnit 5 + Allure, RestAssured, Selenide) for rapid, standardized QA setups.
+        QABase is a lightweight, modular JVM automation testing framework (JUnit 5 + Allure, RestAssured, Selenide) for
+        rapid, standardized QA setups.
     </description>
     <url>https://github.com/toobprojects/qabase-framework</url>
 
@@ -62,10 +63,9 @@
         <allure-maven.version>2.15.2</allure-maven.version>
 
         <apache-commons-lang.version>3.18.0</apache-commons-lang.version>
-        <apache-commons-collection.version>4.5.0</apache-commons-collection.version>
+        <apache-commons-collections.version>4.5.0</apache-commons-collections.version>
         <apache-commons-text.version>1.14.0</apache-commons-text.version>
-        <apache-commons-text.version>1.14.0</apache-commons-text.version>
-        <apache-commons-compression.version>1.28.0</apache-commons-compression.version>
+        <apache-commons-compress.version>1.28.0</apache-commons-compress.version>
 
         <kotlin-logger-jvm-slf4j.version>7.0.7</kotlin-logger-jvm-slf4j.version>
 
@@ -120,7 +120,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
-                <version>${apache-commons-collection.version}</version>
+                <version>${apache-commons-collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -130,7 +130,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>${apache-commons-compression.version}</version>
+                <version>${apache-commons-compress.version}</version>
             </dependency>
 
             <!-- ALLURE -->
@@ -291,7 +291,8 @@
                             </compilerPlugins>
                             <pluginOptions>
                                 <option>all-open:annotation=org.springframework.stereotype.Component</option>
-                                <option>all-open:annotation=org.springframework.boot.test.context.SpringBootTest</option>
+                                <option>all-open:annotation=org.springframework.boot.test.context.SpringBootTest
+                                </option>
                                 <option>all-open:annotation=com.toob.qabase.QaBaseTest</option>
                                 <option>all-open:annotation=com.toob.qabase.QaBaseAutomationModule</option>
                                 <option>all-open:annotation=io.qameta.allure.Step</option>
@@ -444,23 +445,24 @@
 
         <!--
             Generate Allure HTML report ONLY when explicitly enabled.
-            Usage:
-              # Single module
+
+            Usage options:
+              # Option 1: activate by profile id
               mvn clean verify -Pallure-reports
 
-              # Or via a property (same effect)
-              mvn clean verify -Dallure=on
+              # Option 2: activate by property (no -P needed)
+              mvn clean verify -Dallure.reports=true
+
             Notes:
-              - Do NOT run on default mvn clean install.
-              - Results are produced by your test framework during test phases;
-                this profile only builds the pretty HTML.
+              - Do NOT run on default `mvn clean install`.
+              - Test frameworks produce results during test phases; this profile only builds the HTML report from ${allure.results.dir} into ${allure.report.dir}.
         -->
         <profile>
             <id>allure-reports</id>
 
             <!-- Activate when explicitly requested -->
             <activation>
-                <!-- Property-based activation: -Dallure=on -->
+                <!-- Property-based activation: -Dallure.reports=true -->
                 <property>
                     <name>allure.reports</name>
                     <value>true</value>
@@ -547,7 +549,9 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <phase>verify</phase>
-                                <goals><goal>jar-no-fork</goal></goals>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -563,7 +567,9 @@
                             <execution>
                                 <id>attach-javadocs</id>
                                 <phase>verify</phase>
-                                <goals><goal>jar</goal></goals>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
                             </execution>
                         </executions>
                         <configuration>
@@ -604,7 +610,9 @@
                             <execution>
                                 <id>sign-artifacts</id>
                                 <phase>verify</phase>
-                                <goals><goal>sign</goal></goals>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
                                 <configuration>
                                     <!-- Needed for CI/non-interactive environments -->
                                     <gpgArguments>
