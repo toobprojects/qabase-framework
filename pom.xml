@@ -348,7 +348,7 @@
             </plugin>
 
             <!--
-            Maven Compiler Plugin
+                Maven Compiler Plugin
                 •	Compiles Java/Kotlin code with Java 17.
                 •	Configures Spring Boot’s annotation processor for configuration properties.
             -->
@@ -369,7 +369,7 @@
             </plugin>
 
             <!--
-            Maven Surefire Plugin with Allure
+                Maven Surefire Plugin with Allure
                 •	Enables AspectJ weaving (needed for AOP or libraries like Selenide).
                 •	Configures Allure for reporting test results.
             -->
@@ -381,7 +381,8 @@
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
 
-                        <!-- Mockito is currently self-attaching to enable the inline-mock-maker.
+                        <!--
+                            Mockito is currently self-attaching to enable the inline-mock-maker.
                             This will no longer work in future releases of the JDK.
                             Please add Mockito as an agent to your build what is described in Mockito's documentation
                         -->
