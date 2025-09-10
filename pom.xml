@@ -625,9 +625,11 @@
                         </executions>
                     </plugin>
 
-                    <!-- Publishes to Sonatype Central (the successor to Nexus Staging).
-                 `extensions=true` wires it into Maven's lifecycle.
-                 `publishingServerId` must match credentials in ~/.m2/settings.xml. -->
+                    <!--
+                    Publishes to Sonatype Central (the successor to Nexus Staging).
+                        `extensions=true` wires it into Maven's lifecycle.
+                        `publishingServerId` must match credentials in ~/.m2/settings.xml.
+                    -->
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
