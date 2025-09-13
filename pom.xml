@@ -74,6 +74,8 @@
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
         <byte-buddy-agent.version>1.17.5</byte-buddy-agent.version>
         <maven-ant-run.version>3.1.0</maven-ant-run.version>
+        <maven-enforcer-plugin.version>3.6.1</maven-enforcer-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
 
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version>
@@ -88,7 +90,7 @@
         <selenide.reports.dir>${project.build.directory}/selenide-reports</selenide.reports.dir>
         <selenide.downloads.dir>${project.build.directory}/downloads</selenide.downloads.dir>
         <selenide.headless>true</selenide.headless>
-        <allure.reports.enabled>true</allure.reports.enabled>
+        <allure.reports.enabled>false</allure.reports.enabled>
     </properties>
 
 
@@ -100,6 +102,23 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- KOTLIN -->
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-reflect</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-test-junit5</artifactId>
+                <version>${kotlin.version}</version>
             </dependency>
 
             <!-- JACKSON DATABIND -->
@@ -204,50 +223,6 @@
         </dependencies>
     </dependencyManagement>
 
-
-    <dependencies>
-
-        <!-- SPRING BOOT & FRAMEWORK STUFF -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-
-        <!-- KOTLIN -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit5</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-
-        <!-- KOTLIN LOGGING ( Kotlin wrapper for SLF4J ) -->
-        <dependency>
-            <groupId>io.github.oshai</groupId>
-            <artifactId>kotlin-logging-jvm</artifactId>
-        </dependency>
-    </dependencies>
-
-
     <build>
 
         <!--
@@ -260,18 +235,7 @@
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-            </plugin>
 
-
-            <!--
-            This plugin ensures Kotlin code is compiled correctly during the build process.
-                •	Compiles Kotlin code for both main and test phases.
-                •	Targets JVM 17 (since we specified <java.version>17</java.version>).
-            -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -458,7 +422,18 @@
               - Do NOT run on default `mvn clean install`.
               - Test frameworks produce results during test phases; this profile only builds the HTML report from ${allure.results.dir} into ${allure.report.dir}.
         -->
-        <profile>
+        <!--
+          ENFORCER: Keep aggregator POM clean (library-free parent/BOM)
+          Why:
+            • This profile holds Maven Enforcer to guard the parent POM, without affecting consumer report runs.
+          How it works:
+            • activeByDefault=true -> runs on normal builds (mvn clean verify).
+            • When you run other profiles explicitly (e.g. -Pallure-reports), this profile is not active
+              unless you list it; that avoids conflicts with test-scoped deps used for reporting.
+          Tip:
+            • If you ever wonder why this exists: it prevents accidental <dependencies> at root.
+        -->
+       <profile>
             <id>allure-reports</id>
 
             <!-- Activate when explicitly requested -->
@@ -472,10 +447,10 @@
             </activation>
 
             <dependencies>
-                <!-- ALLURE -->
                 <dependency>
                     <groupId>io.qameta.allure</groupId>
                     <artifactId>allure-junit5</artifactId>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
 
@@ -489,7 +464,7 @@
                             <systemPropertyVariables>
                                 <allure.results.directory>${allure.results.dir}</allure.results.directory>
                                 <!-- This line makes allureEnabled() return true in unit tests -->
-                                <allure.reports>${allure.reports.enabled}</allure.reports>
+                                <allure.reports>true</allure.reports>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -501,7 +476,7 @@
                             <systemPropertyVariables>
                                 <allure.results.directory>${allure.results.dir}</allure.results.directory>
                                 <!-- This line makes allureEnabled() return true in ITs -->
-                                <allure.reports>${allure.reports.enabled}</allure.reports>
+                                <allure.reports>true</allure.reports>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -509,14 +484,40 @@
                         Allure Reporting Maven Plugin Generates Allure test reports from test execution data.
                     -->
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>${maven-resources-plugin.version}</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>gather-allure-results</id>
+                                <phase>verify</phase>
+                                <goals><goal>copy-resources</goal></goals>
+                                <configuration>
+                                    <outputDirectory>${allure.results.dir}</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}</directory>
+                                            <includes>
+                                                <include>**/target/allure-results/**</include>
+                                            </includes>
+                                            <filtering>false</filtering>
+                                            <optional>true</optional>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>io.qameta.allure</groupId>
                         <artifactId>allure-maven</artifactId>
                         <version>${allure-maven.version}</version>
+                        <inherited>false</inherited>
                         <configuration>
-                            <reportVersion>${allure.report.version}</reportVersion>
-                            <resultsDirectory>${allure.results.dir}</resultsDirectory>
-                            <reportDirectory>${allure.report.dir}</reportDirectory>
-                            <!--                    <allureHome>${allure.home.dir}</allureHome>-->
+                          <reportVersion>${allure.report.version}</reportVersion>
+                          <resultsDirectory>${allure.results.dir}</resultsDirectory>
+                          <reportDirectory>${allure.report.dir}</reportDirectory>
                         </configuration>
                         <executions>
                             <execution>
@@ -527,6 +528,60 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>strict-parent</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>${maven-enforcer-plugin.version}</version>
+                        <!-- Enforce rules only at validate phase so failures are fast and obvious -->
+                        <executions>
+                            <execution>
+                                <id>enforce-agg-pom</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <!-- Rules: root must be packaging=pom; block any direct <dependencies> at root (use dependencyManagement instead) -->
+                                <configuration>
+                                    <rules>
+                                        <!-- Guard 1: Parent must remain an aggregator (packaging=pom) -->
+                                        <requirePackaging>
+                                            <message>Root must be packaging=pom</message>
+                                            <packagings>
+                                                <packaging>pom</packaging>
+                                            </packagings>
+                                        </requirePackaging>
+                                        <!-- Guard 2: No runtime/test deps at root; versions belong in <dependencyManagement> only -->
+                                        <bannedDependencies>
+                                            <searchTransitive>false</searchTransitive>
+                                            <excludes>
+                                                <exclude>*:*:*</exclude>
+                                            </excludes>
+                                            <message>Root POM must not declare runtime/test dependencies. Use dependencyManagement only.</message>
+                                        </bannedDependencies>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <!-- Classpath for built-in rules (e.g., RequirePackaging); avoids classloader issues on newer Enforcer versions -->
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.enforcer</groupId>
+                                <artifactId>enforcer-rules</artifactId>
+                                <version>${maven-enforcer-plugin.version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
