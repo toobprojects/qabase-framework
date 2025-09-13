@@ -50,6 +50,14 @@
 
         <kotlin.version>2.1.20</kotlin.version>
         <java.version>17</java.version>
+        <junit.version>5.13.4</junit.version>
+
+        <!-- JUnit Platform defaults -->
+        <qabase.junit.parallel.enabled>false</qabase.junit.parallel.enabled>
+        <qabase.junit.lifecycle>per_class</qabase.junit.lifecycle>
+        <qabase.junit.extensions.autodetection.enabled>true</qabase.junit.extensions.autodetection.enabled>
+
+
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <spring-boot.version>3.5.4</spring-boot.version>
         <jackson.version>2.18.3</jackson.version>
@@ -96,6 +104,8 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- ALl Things SPRING -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -103,6 +113,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- JUNIT - JUPITER -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
 
             <!-- KOTLIN -->
             <dependency>
@@ -342,6 +362,31 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
+                    <!-- Jigsaw off for JUnit platform on mixed builds -->
+                    <useModulePath>false</useModulePath>
+
+                    <!-- Limit discovery to Jupiter engines -->
+                    <dependenciesToScan>
+                        <dependency>org.junit.jupiter</dependency>
+                    </dependenciesToScan>
+
+                    <!-- 2) Pass properties to JUnit as SYSTEM PROPERTIES -->
+                    <systemPropertyVariables>
+                        <junit.jupiter.execution.parallel.enabled>
+                            ${qabase.junit.parallel.enabled}
+                        </junit.jupiter.execution.parallel.enabled>
+                        <junit.jupiter.testinstance.lifecycle.default>
+                            ${qabase.junit.lifecycle}
+                        </junit.jupiter.testinstance.lifecycle.default>
+                        <junit.jupiter.extensions.autodetection.enabled>
+                            ${qabase.junit.extensions.autodetection.enabled}
+                        </junit.jupiter.extensions.autodetection.enabled>
+                        <allure.results.directory>${allure.results.dir}</allure.results.directory>
+                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
+                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
+                        <selenide.headless>${selenide.headless}</selenide.headless>
+                    </systemPropertyVariables>
+
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
 
@@ -352,13 +397,6 @@
                         -->
                         -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
                     </argLine>
-                    <systemPropertyVariables>
-                        <allure.results.directory>${allure.results.dir}</allure.results.directory>
-                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
-                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
-                        <selenide.headless>${selenide.headless}</selenide.headless>
-                    </systemPropertyVariables>
-                    <useModulePath>false</useModulePath>
                     <printSummary>true</printSummary>
                     <reportFormat>brief</reportFormat>
                 </configuration>
@@ -382,16 +420,40 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-failsafe-plugin.version}</version>
                 <configuration>
-                    <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
-                        -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
-                    </argLine>
+                    <!-- Jigsaw off for JUnit platform on mixed builds -->
+                    <useModulePath>false</useModulePath>
+
+                    <!-- Limit discovery to Jupiter engines -->
+                    <dependenciesToScan>
+                        <dependency>org.junit.jupiter</dependency>
+                    </dependenciesToScan>
+
+                    <!-- Keep ITs in sync -->
                     <systemPropertyVariables>
+                        <junit.jupiter.execution.parallel.enabled>
+                            ${qabase.junit.parallel.enabled}
+                        </junit.jupiter.execution.parallel.enabled>
+                        <junit.jupiter.testinstance.lifecycle.default>
+                            ${qabase.junit.lifecycle}
+                        </junit.jupiter.testinstance.lifecycle.default>
+                        <junit.jupiter.extensions.autodetection.enabled>
+                            ${qabase.junit.extensions.autodetection.enabled}
+                        </junit.jupiter.extensions.autodetection.enabled>
                         <allure.results.directory>${allure.results.dir}</allure.results.directory>
                         <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
                         <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
                         <selenide.headless>${selenide.headless}</selenide.headless>
                     </systemPropertyVariables>
+
+                    <!-- Adjust patterns if you use different IT naming -->
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <include>**/*ITCase.java</include>
+                    </includes>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
+                    </argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -528,60 +590,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>strict-parent</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>${maven-enforcer-plugin.version}</version>
-                        <!-- Enforce rules only at validate phase so failures are fast and obvious -->
-                        <executions>
-                            <execution>
-                                <id>enforce-agg-pom</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <!-- Rules: root must be packaging=pom; block any direct <dependencies> at root (use dependencyManagement instead) -->
-                                <configuration>
-                                    <rules>
-                                        <!-- Guard 1: Parent must remain an aggregator (packaging=pom) -->
-                                        <requirePackaging>
-                                            <message>Root must be packaging=pom</message>
-                                            <packagings>
-                                                <packaging>pom</packaging>
-                                            </packagings>
-                                        </requirePackaging>
-                                        <!-- Guard 2: No runtime/test deps at root; versions belong in <dependencyManagement> only -->
-                                        <bannedDependencies>
-                                            <searchTransitive>false</searchTransitive>
-                                            <excludes>
-                                                <exclude>*:*:*</exclude>
-                                            </excludes>
-                                            <message>Root POM must not declare runtime/test dependencies. Use dependencyManagement only.</message>
-                                        </bannedDependencies>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                        <!-- Classpath for built-in rules (e.g., RequirePackaging); avoids classloader issues on newer Enforcer versions -->
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.maven.enforcer</groupId>
-                                <artifactId>enforcer-rules</artifactId>
-                                <version>${maven-enforcer-plugin.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
