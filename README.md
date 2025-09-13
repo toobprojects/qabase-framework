@@ -100,7 +100,7 @@ QABase ships with a small set of **developer productivity tools** — plain Bash
 | `bump-version.sh` | Bumps only the **project/module** versions (strict **SemVer**). Supports `--snapshot`, `--allow-dirty`, optional tag & push. Dependencies are **not** changed. | [Version Bump Script Guide](docs/qabase-version-bump-script-guide.md) |
 | `release.sh` | Runs a Maven **release deploy** using the wrapper if present (`./mvnw`) with the `release` profile. Clear, colored logs and non‑zero exit on failure. | [Release Script Guide](docs/qabase-release-script-guide.md) |
 | `test.sh` | Local **test runner**. Always executes from repo root, works with `mvnw` or `mvn`, supports `--module`, `--profile`, `--it` (failsafe), `--allure`, and `--jdk <path>`. | [Local Test Runner](docs/qabase-test-runner-script-guide.md) |
-| `scripts/allure-reports-serve.sh` | Builds all modules and serves a **combined Allure report** via the Allure CLI. Useful for aggregated results across Core/REST/Web UI. | [Allure Reports Guide](docs/qabase-allure-reports-serve-script-guide.md) |
+| `scripts/allure-reports.sh` | Builds all modules and serves a **combined Allure report** via the Allure CLI. Useful for aggregated results across Core/REST/Web UI. | [Allure Reports Guide](docs/qabase-allure-reports-script-guide.md) |
 
 ---
 
