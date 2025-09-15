@@ -456,20 +456,6 @@
     <profiles>
 
         <!--
-            Generate Allure HTML report ONLY when explicitly enabled.
-
-            Usage options:
-              # Option 1: activate by profile id
-              mvn clean verify -Pallure-reports
-
-              # Option 2: activate by property (no -P needed)
-              mvn clean verify -Dallure.reports=true
-
-            Notes:
-              - Do NOT run on default `mvn clean install`.
-              - Test frameworks produce results during test phases; this profile only builds the HTML report from ${allure.results.dir} into ${allure.report.dir}.
-        -->
-        <!--
           KEEP PARENT CLEAN (library-free parent/BOM)
           Why:
             • This profile helps guard the parent POM, without affecting consumer report runs.
