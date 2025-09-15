@@ -48,17 +48,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <kotlin.version>2.1.20</kotlin.version>
         <java.version>17</java.version>
-        <junit.version>5.13.4</junit.version>
+        <kotlin.version>2.1.20</kotlin.version>
+        <kotlin.jvm.target>${java.version}</kotlin.jvm.target>
+        <kotlin.language.version>2.0</kotlin.language.version>
+        <kotlin.api.version>2.0</kotlin.api.version>
+        <kotlin.freeCompilerArgs>
+            -Xjsr305=strict -Xjvm-default=all -Xassertions=jvm -progressive
+        </kotlin.freeCompilerArgs>
 
         <!-- JUnit Platform defaults -->
+        <junit.version>5.13.4</junit.version>
         <qabase.junit.parallel.enabled>false</qabase.junit.parallel.enabled>
         <qabase.junit.lifecycle>per_class</qabase.junit.lifecycle>
         <qabase.junit.extensions.autodetection.enabled>true</qabase.junit.extensions.autodetection.enabled>
 
 
-        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <spring-boot.version>3.5.4</spring-boot.version>
         <jackson.version>2.18.3</jackson.version>
 
@@ -80,10 +85,10 @@
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
-        <byte-buddy-agent.version>1.17.5</byte-buddy-agent.version>
+        <maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
         <maven-ant-run.version>3.1.0</maven-ant-run.version>
-        <maven-enforcer-plugin.version>3.6.1</maven-enforcer-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <byte-buddy-agent.version>1.17.5</byte-buddy-agent.version>
 
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version>
@@ -251,11 +256,10 @@
             •	Main source code is located in src/main/kotlin (instead of the default src/main/java).
             •	Test source code is located in src/test/kotlin.
         -->
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+<!--        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>-->
+<!--        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>-->
 
         <plugins>
-
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -264,19 +268,16 @@
                     <execution>
                         <id>compile</id>
                         <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
+                        <goals><goal>compile</goal></goals>
                         <configuration>
-                            <jvmTarget>${java.version}</jvmTarget>
+                            <jvmTarget>${kotlin.jvm.target}</jvmTarget>
                             <compilerPlugins>
                                 <plugin>spring</plugin>
                                 <plugin>all-open</plugin>
                             </compilerPlugins>
                             <pluginOptions>
                                 <option>all-open:annotation=org.springframework.stereotype.Component</option>
-                                <option>all-open:annotation=org.springframework.boot.test.context.SpringBootTest
-                                </option>
+                                <option>all-open:annotation=org.springframework.boot.test.context.SpringBootTest</option>
                                 <option>all-open:annotation=com.toob.qabase.QaBaseTest</option>
                                 <option>all-open:annotation=com.toob.qabase.QaBaseAutomationModule</option>
                                 <option>all-open:annotation=io.qameta.allure.Step</option>
@@ -286,24 +287,16 @@
                     <execution>
                         <id>test-compile</id>
                         <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
+                        <goals><goal>test-compile</goal></goals>
                         <configuration>
-                            <jvmTarget>${java.version}</jvmTarget>
+                            <jvmTarget>${kotlin.jvm.target}</jvmTarget>
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
-                    <args>
-                        <arg>-Xjsr305=strict</arg>
-                    </args>
-
-                    <!--
-                    Enables Kotlin compiler plugins:
-                        •	spring – Enables Spring support in Kotlin.
-                        •	kotlinx-serialization – Enables JSON serialization support in Kotlin.
-                    -->
+                    <args><arg>${kotlin.freeCompilerArgs}</arg></args>
+                    <languageVersion>${kotlin.language.version}</languageVersion>
+                    <apiVersion>${kotlin.api.version}</apiVersion>
                     <compilerPlugins>
                         <plugin>spring</plugin>
                         <plugin>kotlinx-serialization</plugin>
@@ -322,7 +315,6 @@
                         <artifactId>kotlin-maven-allopen</artifactId>
                         <version>${kotlin.version}</version>
                     </dependency>
-                    <!-- Add this dependency for serialization -->
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-serialization</artifactId>
@@ -342,13 +334,6 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring-boot.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -485,9 +470,9 @@
               - Test frameworks produce results during test phases; this profile only builds the HTML report from ${allure.results.dir} into ${allure.report.dir}.
         -->
         <!--
-          ENFORCER: Keep aggregator POM clean (library-free parent/BOM)
+          KEEP PARENT CLEAN (library-free parent/BOM)
           Why:
-            • This profile holds Maven Enforcer to guard the parent POM, without affecting consumer report runs.
+            • This profile helps guard the parent POM, without affecting consumer report runs.
           How it works:
             • activeByDefault=true -> runs on normal builds (mvn clean verify).
             • When you run other profiles explicitly (e.g. -Pallure-reports), this profile is not active
