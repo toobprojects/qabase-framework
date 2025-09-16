@@ -104,6 +104,15 @@
         <selenide.downloads.dir>${project.build.directory}/downloads</selenide.downloads.dir>
         <selenide.headless>true</selenide.headless>
         <allure.reports.enabled>false</allure.reports.enabled>
+
+
+        <!-- Always-on agent(s) -->
+        <qabase.tests.baseArgLine>
+            -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+        </qabase.tests.baseArgLine>
+
+        <!-- Opt-in Mockito inline agent (empty by default, set by profile) -->
+        <qabase.tests.mockitoInlineArgLine/>
     </properties>
 
 
@@ -256,8 +265,8 @@
             •	Main source code is located in src/main/kotlin (instead of the default src/main/java).
             •	Test source code is located in src/test/kotlin.
         -->
-<!--        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>-->
-<!--        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>-->
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
         <plugins>
             <plugin>
@@ -372,29 +381,34 @@
                         <selenide.headless>${selenide.headless}</selenide.headless>
                     </systemPropertyVariables>
 
+                    <includes>
+                        <include>**/*Test.class</include>
+                        <include>**/*Tests.class</include>
+                        <include>**/*TestCase.class</include>
+                        <include>**/*Spec.class</include>          <!-- add this -->
+                    </includes>
+
+                    <!-- Compose: always-on + optional -->
                     <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        ${qabase.tests.baseArgLine}
 
                         <!--
                             Mockito is currently self-attaching to enable the inline-mock-maker.
                             This will no longer work in future releases of the JDK.
                             Please add Mockito as an agent to your build what is described in Mockito's documentation
                         -->
-                        -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
+                        ${qabase.tests.mockitoInlineArgLine}
                     </argLine>
+
                     <printSummary>true</printSummary>
                     <reportFormat>brief</reportFormat>
+
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjweaver</artifactId>
                         <version>${aspectj.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>net.bytebuddy</groupId>
-                        <artifactId>byte-buddy-agent</artifactId>
-                        <version>${byte-buddy-agent.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -432,12 +446,19 @@
 
                     <!-- Adjust patterns if you use different IT naming -->
                     <includes>
-                        <include>**/*IT.java</include>
-                        <include>**/*ITCase.java</include>
+                        <include>**/*IT.class</include>
+                        <include>**/*ITCase.class</include>
+                        <include>**/*SpecIT.class</include>
                     </includes>
                     <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
-                        -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
+                        ${qabase.tests.baseArgLine}
+
+                        <!--
+                            Mockito is currently self-attaching to enable the inline-mock-maker.
+                            This will no longer work in future releases of the JDK.
+                            Please add Mockito as an agent to your build what is described in Mockito's documentation
+                        -->
+                        ${qabase.tests.mockitoInlineArgLine}
                     </argLine>
                 </configuration>
                 <executions>
@@ -561,6 +582,54 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>mockito-inline</id>
+
+            <!-- Optional: also allow property activation: -Dmockito.inline=true -->
+            <activation>
+                <property>
+                    <name>mockito.inline</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+            <properties>
+                <qabase.tests.mockitoInlineArgLine>
+                    -javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar"
+                </qabase.tests.mockitoInlineArgLine>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>net.bytebuddy</groupId>
+                                <artifactId>byte-buddy-agent</artifactId>
+                                <version>${byte-buddy-agent.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${maven-failsafe-plugin.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>net.bytebuddy</groupId>
+                                <artifactId>byte-buddy-agent</artifactId>
+                                <version>${byte-buddy-agent.version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

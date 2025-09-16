@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.toob.qabase.core.AllureExtensions
-import com.toob.qabase.core.AllureExtensions.step
 import io.restassured.response.Response
 import kotlinx.serialization.json.Json
-import kotlin.test.assertNotNull
 
 /**
  * Utility class providing common HTTP test support functions such as serialization configuration,
@@ -59,54 +57,6 @@ object HttpSupport {
 		// Attach the content
 		toPrettyJson(body)?.let { jsonBody ->
 			AllureExtensions.attachJson("Request Body", jsonBody)
-		}
-	}
-
-	/**
-	 * Verifies that the HTTP response status code is 200 (OK).
-	 * Useful for confirming that the request was successfully processed by the server.
-	 * Also logs this verification step in the Allure report.
-	 */
-	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
-	@JvmStatic
-	fun allOkay(response: Response) =
-		verifyStatusCode(response, 200, "✅ HTTP OK confirmation (200)")
-
-	/**
-	 * Verifies that the HTTP response status code is 201 (Created).
-	 * Indicates that a new resource was successfully created on the server.
-	 * Also logs this verification step in the Allure report.
-	 */
-	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
-	@JvmStatic
-	fun created(response: Response) =
-		verifyStatusCode(response, 201, "✅ Record successfully Created (201)")
-
-	/**
-	 * Verifies that the HTTP response status code is 204 (No Content).
-	 * Indicates that the request was successful but there is no content to return.
-	 * Also logs this verification step in the Allure report.
-	 */
-	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
-	@JvmStatic
-	fun allOkayWithoutContent(response: Response) =
-		verifyStatusCode(response, 204, "✅ No Content but request successful (204)")
-
-	/**
-	 * Validates the HTTP status code of the response against the expected code.
-	 * Logs the verification step in Allure and asserts that the response status matches expected.
-	 *
-	 * @param expectedCode Int - The expected HTTP status code to verify.
-	 * @param response Response - The REST Assured HTTP response object to validate.
-	 * @param message String - Descriptive message for logging in Allure.
-	 */
-	@Deprecated("Deprecated: This method will be removed in future versions. Use RestExpect for status code validations instead.", level = DeprecationLevel.WARNING)
-	@JvmStatic
-	fun verifyStatusCode(response: Response, expectedCode: Int, message: String) {
-		assertNotNull(response)
-		step(message) {
-			// Assert that the response status code matches the expected code
-			response.then().statusCode(expectedCode)
 		}
 	}
 
