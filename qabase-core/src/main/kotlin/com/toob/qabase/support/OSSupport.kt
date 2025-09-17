@@ -1,6 +1,5 @@
 package com.toob.qabase.support
 
-import com.toob.qabase.events.ReportArchiverListener
 import com.toob.qabase.util.logger
 import java.io.File
 import kotlin.system.exitProcess

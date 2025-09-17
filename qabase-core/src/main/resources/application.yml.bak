@@ -1,0 +1,30 @@
+
+# ======================================================================================================================
+# QABASE CONFIGS
+# ======================================================================================================================
+qabase:
+  core:
+    reports:
+      archive:
+        enabled: false   # set to false (or omit) to disable
+
+# ======================================================================================================================
+# SPRING CONFIGS SECTION
+# ======================================================================================================================
+
+# Optimising Spring By Excluding wat I don't need.
+spring:
+  banner:
+    location: classpath:qa-base-banner.txt
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration
+      - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration
+
+application:
+  title: QABase Framework
+  version: 1.4.1
