@@ -12,8 +12,6 @@ import kotlin.reflect.KClass
 // Ensures this annotation appears in generated documentation (same as Java’s @Documented).
 @MustBeDocumented
 
-// Extension for the @SpringBootTest
-
 // Allows non-static @BeforeAll
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 

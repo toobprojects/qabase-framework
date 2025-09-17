@@ -86,11 +86,11 @@ class RestExpect(private val response: Response) {
 	 * Terminal operation: deserialize the response body into the given type.
 	 *
 	 * Usage (Java):
-	 *   Todo todo = HttpSupport.expect(resp)
+	 *   Task Task = HttpSupport.expect(resp)
 	 *       .ok()
 	 *       .contentType("application/json")
 	 *       .attach()
-	 *       .as(Todo.class);
+	 *       .as(Task.class);
 	 */
 	fun <T> `as`(clazz: Class<T>): T {
 		return response.`as`(clazz)
@@ -100,9 +100,9 @@ class RestExpect(private val response: Response) {
 	 * Terminal operation: deserialize the response body into the given generic type.
 	 *
 	 * Usage (Java with collections):
-	 *   List<Todo> todos = HttpSupport.expect(resp)
+	 *   List<Task> todos = HttpSupport.expect(resp)
 	 *       .ok()
-	 *       .as(new TypeRef<List<Todo>>() {});
+	 *       .as(new TypeRef<List<Task>>() {});
 	 */
 	fun <T> `as`(typeRef: TypeRef<T>): T {
 		return response.`as`(typeRef)
