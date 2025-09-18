@@ -43,8 +43,6 @@ class RestAssuredExtension : BeforeAllCallback, AfterAllCallback {
 		// Set base URL on global and default request specification
 		RestAssured.baseURI = cfg.baseUrl()
 		val defaultSpec = RestAssured.given().contentType(ContentType.JSON)
-		val token = cfg.authToken()
-		if (token.isNotBlank()) defaultSpec.auth().oauth2(token)
 		RestAssured.requestSpecification = defaultSpec.baseUri(cfg.baseUrl())
 
     }

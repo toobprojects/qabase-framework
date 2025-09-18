@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.toob.qabase.core.AllureExtensions
+import com.toob.qabase.rest.assertions.RestExpect
 import io.restassured.response.Response
-import kotlinx.serialization.json.Json
 
 /**
  * Utility class providing common HTTP test support functions such as serialization configuration,
@@ -18,20 +18,6 @@ object HttpSupport {
 	private val internalMapper = ObjectMapper()
 		.registerModule(KotlinModule.Builder().build())
 		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-	/**
-	 * Creates a Kotlinx Serialization Json configuration with:
-	 * - Pretty printing enabled for readable output
-	 * - Unknown keys ignored during deserialization for flexibility
-	 * - Defaults encoded to ensure complete JSON representation
-	 */
-	@JvmStatic
-	fun serialisationConfig(): Json =
-		Json {
-			prettyPrint = true
-			ignoreUnknownKeys = true
-			encodeDefaults = true
-		}
 
 	/**
 	 * Attaches the API response body to the Allure report.

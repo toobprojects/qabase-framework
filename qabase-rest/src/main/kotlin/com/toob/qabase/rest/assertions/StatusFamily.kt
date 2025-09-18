@@ -1,4 +1,4 @@
-package com.toob.qabase.rest.support
+package com.toob.qabase.rest.assertions
 
 /**
  * HTTP status code families per RFC (1xx, 2xx, 3xx, 4xx, 5xx).
