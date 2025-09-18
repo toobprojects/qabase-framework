@@ -2,10 +2,10 @@ package com.toob.qabase.rest
 
 import com.toob.qabase.rest.support.HttpSupport
 import io.restassured.RestAssured
-import io.restassured.config.HttpClientConfig
 import io.restassured.http.ContentType
 import io.restassured.specification.FilterableRequestSpecification
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
