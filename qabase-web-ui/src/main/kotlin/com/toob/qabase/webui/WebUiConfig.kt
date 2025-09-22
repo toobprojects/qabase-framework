@@ -3,10 +3,6 @@ package com.toob.qabase.webui
 import com.toob.qabase.core.config.ConfigLoader
 import io.smallrye.config.ConfigMapping
 import io.smallrye.config.WithDefault
-import org.eclipse.microprofile.config.ConfigProvider
-import io.smallrye.config.SmallRyeConfig
-import io.smallrye.config.SmallRyeConfigBuilder
-import java.util.NoSuchElementException
 
 /**
  * Type-safe, DI-free config mapping for the "qabase.webui" prefix.
