@@ -81,6 +81,7 @@
         <apache-commons-collections.version>4.5.0</apache-commons-collections.version>
         <apache-commons-text.version>1.14.0</apache-commons-text.version>
         <apache-commons-compress.version>1.28.0</apache-commons-compress.version>
+        <commons-codec.version>1.19.0</commons-codec.version>
 
         <kotlin-logger-jvm-slf4j.version>7.0.7</kotlin-logger-jvm-slf4j.version>
 
@@ -202,6 +203,12 @@
                 <groupId>org.apachecommons</groupId>
                 <artifactId>commons-com.press</artifactId>
                 <version>${apache-commons-compress.version}</version>
+            </dependency>
+            <!-- Apache Commons Codec (needed by Tar/GZip path in commons-compress) -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
             </dependency>
 
             <!-- ALLURE -->
