@@ -1,5 +1,6 @@
 package com.toob.qabase.webui
 
+import com.toob.qabase.core.config.ConfigLoader
 import io.smallrye.config.ConfigMapping
 import io.smallrye.config.WithDefault
 import org.eclipse.microprofile.config.ConfigProvider
@@ -50,30 +51,5 @@ interface WebUiConfig {
  * 2. If the mapping is not found there, fall back to creating our own SmallRyeConfig
  *    with default + discovered sources so that application.yaml is read.
  */
-fun loadWebUiConfig(): WebUiConfig {
-	val currentConfig = ConfigProvider.getConfig()
-
-	// Case 1: ConfigProvider already gives us a SmallRyeConfig
-	if (currentConfig is SmallRyeConfig) {
-		return runCatching {
-			currentConfig.getConfigMapping(WebUiConfig::class.java)
-		}.getOrElse { exception ->
-			if (exception is NoSuchElementException) {
-				bootstrapWebUiConfig().getConfigMapping(WebUiConfig::class.java)
-			} else {
-				throw exception
-			}
-		}
-	}
-
-	// Case 2: ConfigProvider is not SmallRyeConfig -> always bootstrap
-	return bootstrapWebUiConfig().getConfigMapping(WebUiConfig::class.java)
-}
-
-private fun bootstrapWebUiConfig(): SmallRyeConfig =
-	SmallRyeConfigBuilder()
-		.withMapping(WebUiConfig::class.java)
-		.addDefaultSources()
-		.addDiscoveredSources()
-		.addDiscoveredConverters()
-		.build()
+fun loadWebUiConfig(): WebUiConfig =
+	ConfigLoader.loadMapping(WebUiConfig::class)

@@ -1,5 +1,6 @@
 package com.toob.qabase.rest
 
+import com.toob.qabase.core.config.ConfigLoader
 import io.smallrye.config.ConfigMapping
 import io.smallrye.config.WithDefault
 import org.eclipse.microprofile.config.ConfigProvider
@@ -32,32 +33,5 @@ interface RestConfig {
  * 2. If the mapping is not found there, fall back to creating our own SmallRyeConfig
  *    with default + discovered sources so that application.yaml is read.
  */
-fun loadRestConfig(): RestConfig {
-    val currentConfig = ConfigProvider.getConfig()
-
-    // Case 1: ConfigProvider already gives us a SmallRyeConfig
-    if (currentConfig is SmallRyeConfig) {
-        return runCatching {
-            // Try to get the config mapping from the current SmallRyeConfig
-            currentConfig.getConfigMapping(RestConfig::class.java)
-        }.getOrElse { exception ->
-            if (exception is NoSuchElementException) {
-                // Mapping not registered -> build our own config and get the mapping from there
-                bootstrapRestConfig().getConfigMapping(RestConfig::class.java)
-            } else {
-                throw exception
-            }
-        }
-    }
-
-    // Case 2: ConfigProvider is not SmallRyeConfig -> always bootstrap
-    return bootstrapRestConfig().getConfigMapping(RestConfig::class.java)
-}
-
-private fun bootstrapRestConfig(): SmallRyeConfig =
-    SmallRyeConfigBuilder()
-        .withMapping(RestConfig::class.java)
-        .addDefaultSources()
-        .addDiscoveredSources()
-        .addDiscoveredConverters()
-        .build()
+fun loadRestConfig(): RestConfig =
+	ConfigLoader.loadMapping(RestConfig::class)
