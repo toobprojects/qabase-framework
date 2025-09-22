@@ -107,7 +107,6 @@
         <selenide.headless>true</selenide.headless>
         <allure.reports.enabled>false</allure.reports.enabled>
 
-
         <!-- Always-on agent(s) -->
         <qabase.tests.baseArgLine>
             -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
@@ -200,8 +199,8 @@
                 <version>${apache-commons-text.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-compress</artifactId>
+                <groupId>org.apachecommons</groupId>
+                <artifactId>commons-com.press</artifactId>
                 <version>${apache-commons-compress.version}</version>
             </dependency>
 
