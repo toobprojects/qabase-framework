@@ -74,7 +74,4 @@ object HttpSupport {
 	@JvmStatic
 	val mapper: ObjectMapper
 		get() = internalMapper
-
-	@JvmStatic
-	fun expect(response: Response): RestExpect = RestExpect(response)
 }
