@@ -5,7 +5,7 @@ import com.codeborne.selenide.Selenide
 import com.codeborne.selenide.logevents.LogEventListener
 import com.codeborne.selenide.logevents.SelenideLogger
 import com.toob.qabase.core.AllureExtensions
-import com.toob.qabase.support.OSSupport
+import com.toob.qabase.core.support.OSSupport
 import io.qameta.allure.selenide.AllureSelenide
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback

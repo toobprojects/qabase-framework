@@ -1,4 +1,4 @@
-package com.toob.qabase.config
+package com.toob.qabase.core.config
 
 import org.eclipse.microprofile.config.ConfigProvider
 

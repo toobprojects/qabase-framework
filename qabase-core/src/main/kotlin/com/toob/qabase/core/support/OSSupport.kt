@@ -1,6 +1,6 @@
-package com.toob.qabase.support
+package com.toob.qabase.core.support
 
-import com.toob.qabase.util.logger
+import com.toob.qabase.core.util.logger
 import java.io.File
 import kotlin.system.exitProcess
 

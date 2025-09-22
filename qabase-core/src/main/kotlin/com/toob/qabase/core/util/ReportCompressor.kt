@@ -1,4 +1,4 @@
-package com.toob.qabase.util
+package com.toob.qabase.core.util
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream

@@ -1,4 +1,4 @@
-package com.toob.qabase
+package com.toob.qabase.core
 
 import org.junit.jupiter.api.TestInstance
 import kotlin.reflect.KClass

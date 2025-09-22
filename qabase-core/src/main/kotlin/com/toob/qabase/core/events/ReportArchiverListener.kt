@@ -1,6 +1,6 @@
 //package com.toob.qabase.events
 //
-//import com.toob.qabase.CoreModuleConstants
+//import com.toob.qabase.core.CoreModuleConstants
 //import com.toob.qabase.util.ReportCompressor
 //import com.toob.qabase.util.logger
 //import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

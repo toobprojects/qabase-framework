@@ -1,6 +1,6 @@
 package com.toob.qabase.webui
 
-import com.toob.qabase.QaBaseTest
+import com.toob.qabase.core.QaBaseTest
 import com.toob.qabase.webui.dsl.Sel
 import com.toob.qabase.webui.dsl.UI
 import com.toob.qabase.webui.dsl.UI.into

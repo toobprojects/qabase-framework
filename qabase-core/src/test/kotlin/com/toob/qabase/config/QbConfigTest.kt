@@ -1,5 +1,6 @@
 package com.toob.qabase.config
 
+import com.toob.qabase.core.config.QbConfig
 import org.junit.jupiter.api.Assertions.*
 import kotlin.test.Test
 
