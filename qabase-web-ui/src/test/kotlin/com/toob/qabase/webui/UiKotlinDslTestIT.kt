@@ -7,7 +7,7 @@ import com.toob.qabase.webui.dsl.UI.into
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Test
 
-@QaBaseTest
+@QaWebUiTest
 class UiKotlinDslTestIT {
 
 	@Test
