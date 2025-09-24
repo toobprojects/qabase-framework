@@ -1,23 +1,23 @@
 package com.toob.qabase.webui.flows
 
+import com.toob.qabase.webui.QaWebUiTest
 import com.toob.qabase.webui.dsl.UI
 import com.toob.qabase.webui.pages.HomePage
-import com.toob.qabase.webui.pages.PageFactory
 import com.toob.qabase.webui.pages.ProductPage
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 
-@Component
-class ShoppingFlows(private val pages: PageFactory) {
+class ShoppingFlows {
+
+	private val homePage = HomePage()
+	private val productPage = ProductPage()
 
 	fun addSamsungS6ToCart(): ShoppingFlows {
-		pages.get(HomePage::class.java)
+		homePage
 			.open()
 			.verifyVisible()
 			.shouldSeeProducts()
 			.openProductById(1)
 
-		pages.get(ProductPage::class.java)
+		productPage
 			.verifyVisible()
 			.shouldShowTitle("Samsung")
 			.addToCart()

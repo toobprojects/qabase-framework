@@ -8,7 +8,6 @@ import com.codeborne.selenide.CollectionCondition.sizeLessThan
 import com.codeborne.selenide.CollectionCondition.sizeLessThanOrEqual
 import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.Screenshots
-import com.codeborne.selenide.Selenide
 import com.codeborne.selenide.Selenide.*
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.WebDriverRunner
@@ -16,7 +15,7 @@ import com.codeborne.selenide.ClickOptions
 import io.qameta.allure.Step
 import java.time.Duration
 import com.toob.qabase.core.AllureExtensions
-import com.toob.qabase.util.logger
+import com.toob.qabase.core.util.logger
 import io.qameta.allure.Allure
 
 /**

@@ -2,9 +2,7 @@ package com.toob.qabase.webui.pages
 
 import com.toob.qabase.webui.dsl.UI
 import io.qameta.allure.Step
-import org.springframework.stereotype.Component
 
-@Component
 class LoginPage : VisiblePage<LoginPage> {
 
 	@Step("Open Login")

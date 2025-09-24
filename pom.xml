@@ -56,6 +56,8 @@
         <kotlin.freeCompilerArgs>
             -Xjsr305=strict -Xjvm-default=all -Xassertions=jvm -progressive
         </kotlin.freeCompilerArgs>
+        <micronaut.version>4.9.3</micronaut.version>
+        <smallrye-config.version>3.11.0</smallrye-config.version>
 
         <!-- JUnit Platform defaults -->
         <junit.version>5.13.4</junit.version>
@@ -79,6 +81,7 @@
         <apache-commons-collections.version>4.5.0</apache-commons-collections.version>
         <apache-commons-text.version>1.14.0</apache-commons-text.version>
         <apache-commons-compress.version>1.28.0</apache-commons-compress.version>
+        <commons-codec.version>1.19.0</commons-codec.version>
 
         <kotlin-logger-jvm-slf4j.version>7.0.7</kotlin-logger-jvm-slf4j.version>
 
@@ -105,7 +108,6 @@
         <selenide.headless>true</selenide.headless>
         <allure.reports.enabled>false</allure.reports.enabled>
 
-
         <!-- Always-on agent(s) -->
         <qabase.tests.baseArgLine>
             -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
@@ -118,7 +120,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <!-- ALl Things SPRING -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -137,6 +138,24 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Micronaut and SmallRye managed versions for core module -->
+            <dependency>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>${micronaut.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.smallrye.config</groupId>
+                <artifactId>smallrye-config</artifactId>
+                <version>${smallrye-config.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.smallrye.config</groupId>
+                <artifactId>smallrye-config-source-yaml</artifactId>
+                <version>${smallrye-config.version}</version>
+            </dependency>
 
             <!-- KOTLIN -->
             <dependency>
@@ -181,9 +200,15 @@
                 <version>${apache-commons-text.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-compress</artifactId>
+                <groupId>org.apachecommons</groupId>
+                <artifactId>commons-com.press</artifactId>
                 <version>${apache-commons-compress.version}</version>
+            </dependency>
+            <!-- Apache Commons Codec (needed by Tar/GZip path in commons-compress) -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
             </dependency>
 
             <!-- ALLURE -->
@@ -281,16 +306,8 @@
                         <configuration>
                             <jvmTarget>${kotlin.jvm.target}</jvmTarget>
                             <compilerPlugins>
-                                <plugin>spring</plugin>
-                                <plugin>all-open</plugin>
+                                <plugin>kotlinx-serialization</plugin>
                             </compilerPlugins>
-                            <pluginOptions>
-                                <option>all-open:annotation=org.springframework.stereotype.Component</option>
-                                <option>all-open:annotation=org.springframework.boot.test.context.SpringBootTest</option>
-                                <option>all-open:annotation=com.toob.qabase.QaBaseTest</option>
-                                <option>all-open:annotation=com.toob.qabase.QaBaseAutomationModule</option>
-                                <option>all-open:annotation=io.qameta.allure.Step</option>
-                            </pluginOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -301,29 +318,24 @@
                             <jvmTarget>${kotlin.jvm.target}</jvmTarget>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>kapt</id>
+                        <goals><goal>kapt</goal></goals>
+                    </execution>
                 </executions>
                 <configuration>
-                    <args><arg>${kotlin.freeCompilerArgs}</arg></args>
                     <languageVersion>${kotlin.language.version}</languageVersion>
                     <apiVersion>${kotlin.api.version}</apiVersion>
-                    <compilerPlugins>
-                        <plugin>spring</plugin>
-                        <plugin>kotlinx-serialization</plugin>
-                    </compilerPlugins>
+                    <args><arg>${kotlin.freeCompilerArgs}</arg></args>
                     <annotationProcessorPaths>
                         <annotationProcessorPath>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring-boot.version}</version>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-inject-java</artifactId>
+                            <version>${micronaut.version}</version>
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
                 </configuration>
                 <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-maven-allopen</artifactId>
-                        <version>${kotlin.version}</version>
-                    </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-serialization</artifactId>

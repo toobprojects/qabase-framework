@@ -2,10 +2,8 @@ package com.toob.qabase.webui.pages
 
 import com.toob.qabase.webui.dsl.UI
 import io.qameta.allure.Step
-import org.springframework.stereotype.Component
 
 /** DemoBlaze Home page (example app). */
-@Component
 class HomePage : VisiblePage<HomePage> {
 
 	@Step("Open Home")

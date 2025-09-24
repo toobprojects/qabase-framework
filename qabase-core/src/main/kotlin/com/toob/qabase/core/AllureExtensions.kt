@@ -1,7 +1,6 @@
 package com.toob.qabase.core
 
-import com.toob.qabase.CoreModuleConstants
-import com.toob.qabase.util.logger
+import com.toob.qabase.core.util.logger
 import io.qameta.allure.Allure
 import java.text.SimpleDateFormat
 import java.util.function.Supplier
