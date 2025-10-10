@@ -1,6 +1,8 @@
 
 # QABase Framework
 
+<img src="docs/static/qabase-logo-idea.png" alt="QABase Logo" style="width:80%;max-width:220px;height:auto;display:block;margin:auto;" />
+
 A lightweight, modular **JVM test automation framework** that gets teams productive fast—without rebuilding the same plumbing on every project. QABase standardizes the boring bits (bootstrapping, test wiring, reporting, CI-ready structure) so you can focus on **real test logic**.
 
 - 📘 **Published Docs:** [qabase-docs](https://toobprojects.github.io/qabase-docs)
