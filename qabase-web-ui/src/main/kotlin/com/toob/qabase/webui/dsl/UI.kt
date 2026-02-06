@@ -2,6 +2,7 @@ package com.toob.qabase.webui.dsl
 
 import com.microsoft.playwright.Locator
 import com.microsoft.playwright.Page
+import com.microsoft.playwright.assertions.LocatorAssertions
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import com.toob.qabase.core.AllureExtensions
 import com.toob.qabase.webui.PlaywrightSession
@@ -87,7 +88,7 @@ object UI {
 	fun see(css: String, expected: String, timeoutMs: Double = 4000.0): UI = apply {
 		step("Expect CSS $css contains '$expected'") {
 			assertThat(Sel.css(css)).containsText(expected,
-				com.microsoft.playwright.assertions.LocatorAssertions.ContainsTextOptions().setTimeout(timeoutMs))
+				LocatorAssertions.ContainsTextOptions().setTimeout(timeoutMs))
 		}
 	}
 
@@ -96,7 +97,7 @@ object UI {
 	fun shouldSeeText(text: String, timeoutMs: Double = 4000.0): UI = apply {
 		step("Expect text visible in body: $text") {
 			assertThat(Sel.xpath("//body//*[contains(normalize-space(.), '$text')]"))
-				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+				.isVisible(LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
 		}
 	}
 
@@ -106,7 +107,7 @@ object UI {
 		val t = text.lowercase()
 		step("Expect text visible (ignore case): $text") {
 			assertThat(Sel.xpath("//*[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '$t')]"))
-				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+				.isVisible(LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
 		}
 	}
 
@@ -115,7 +116,7 @@ object UI {
 	fun seeVisible(css: String, timeoutMs: Double = 4000.0): UI = apply {
 		step("Expect CSS $css visible") {
 			assertThat(Sel.css(css))
-				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+				.isVisible(LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
 		}
 	}
 
@@ -175,7 +176,7 @@ object UI {
 		step("Clear CSS $css") {
 			val locator = Sel.css(css)
 			assertThat(locator)
-				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+				.isVisible(LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
 			locator.clear()
 		}
 	}
@@ -185,7 +186,7 @@ object UI {
 	fun clear(locator: Locator, timeoutMs: Double = 4000.0): UI = apply {
 		step("Clear locator") {
 			assertThat(locator)
-				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+				.isVisible(LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
 			locator.clear()
 		}
 	}

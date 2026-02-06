@@ -4,6 +4,7 @@ import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
+import com.microsoft.playwright.Tracing
 import io.qameta.allure.Allure
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.AfterEachCallback
@@ -36,7 +37,7 @@ class PlaywrightExtension : BeforeAllCallback, BeforeEachCallback, AfterEachCall
 
 		if (cfg.traceOnFailure()) {
 			browserContext.tracing().start(
-				com.microsoft.playwright.Tracing.StartOptions()
+				Tracing.StartOptions()
 					.setScreenshots(true)
 					.setSnapshots(true)
 					.setSources(true)
@@ -72,7 +73,7 @@ class PlaywrightExtension : BeforeAllCallback, BeforeEachCallback, AfterEachCall
 				if (cfg.traceOnFailure() && failed) {
 					val tracePath = Files.createTempFile("playwright-trace-", ".zip")
 					browserContext.tracing().stop(
-						com.microsoft.playwright.Tracing.StopOptions().setPath(tracePath)
+						Tracing.StopOptions().setPath(tracePath)
 					)
 					Files.newInputStream(tracePath).use {
 						Allure.addAttachment("Playwright Trace", "application/zip", it, "zip")
