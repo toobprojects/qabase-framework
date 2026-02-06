@@ -25,7 +25,7 @@ A lightweight, modular **JVM test automation framework** that gets teams product
 - **qabase-rest** – REST API test foundations built on **REST Assured** + Kotlin.
 - **qabase-web-ui** – Web UI test foundations built on **Playwright for Java** with Allure integration.
 
-> Root coordinates (parent POM): `io.github.toobprojects:qabase-framework:2.0.0`
+> Root coordinates (parent POM): `io.github.toobprojects:qabase-framework:2.1.1`
 
 ---
 
@@ -49,14 +49,14 @@ Add only the modules you need. For example, to use `qabase-core`:
 <dependency>
   <groupId>io.github.toobprojects</groupId>
   <artifactId>qabase-core</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.1</version>
 </dependency>
 ```
 
 ### Gradle (Kotlin DSL)
 ```kotlin
 dependencies {
-  testImplementation("io.github.toobprojects:qabase-core:2.0.0")
+  testImplementation("io.github.toobprojects:qabase-core:2.1.1")
 }
 ```
 
