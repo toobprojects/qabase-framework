@@ -1,213 +1,202 @@
 package com.toob.qabase.webui.dsl
 
-import com.codeborne.selenide.Condition.*
-import com.codeborne.selenide.CollectionCondition.size
-import com.codeborne.selenide.CollectionCondition.sizeGreaterThan
-import com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual
-import com.codeborne.selenide.CollectionCondition.sizeLessThan
-import com.codeborne.selenide.CollectionCondition.sizeLessThanOrEqual
-import com.codeborne.selenide.Configuration
-import com.codeborne.selenide.Screenshots
-import com.codeborne.selenide.Selenide.*
-import com.codeborne.selenide.SelenideElement
-import com.codeborne.selenide.WebDriverRunner
-import com.codeborne.selenide.ClickOptions
-import io.qameta.allure.Step
-import java.time.Duration
+import com.microsoft.playwright.Locator
+import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import com.toob.qabase.core.AllureExtensions
-import com.toob.qabase.core.util.logger
-import io.qameta.allure.Allure
+import com.toob.qabase.webui.PlaywrightSession
 
 /**
- * Minimal fluent DSL over Selenide:
- * - Kotlin sugar: type("x") into Sel.id("y"), Sel.css("...").clicks(Unit)
- * - Fluent chains (Kotlin & Java): UI.visit(...).clickCss(...).typeInto(...).shouldSee(...)
- * - On failure: auto-attach screenshot + page source to Allure.
+ * Minimal fluent DSL over Playwright:
+ * - Kotlin sugar: type("x") into Sel.id("y")
+ * - Fluent chains (Kotlin & Java): UI.visit(...).tap(...).fill(...).see(...)
  */
 object UI {
 
-	private var log = logger()
-
-
 	// ---------- tiny aliases (RestExpect feel) ----------
-	/** alias for clickCss */
-	@JvmStatic fun tap(css: String): UI = clickCss(css)
+	/** alias for tap */
+	@JvmStatic fun clickCss(css: String): UI = tap(css)
 
-	/** alias for typeInto */
-	@JvmStatic fun fill(css: String, value: String): UI = typeInto(css, value)
+	/** alias for fill */
+	@JvmStatic fun typeInto(css: String, value: String): UI = fill(css, value)
+
+	/** alias for fill(locator, value) */
+	@JvmStatic fun typeInto(locator: Locator, value: String): UI = apply {
+		step("Type '$value' into locator") { locator.fill(value) }
+	}
 
 	/** alias for visit */
 	@JvmStatic fun go(url: String): UI = visit(url)
 
-	/** alias for shouldSee */
+	/** alias for see */
 	@JvmOverloads
-	@JvmStatic fun see(css: String, expected: String, timeoutMs: Long = 4000): UI =
-		shouldSee(css, expected, timeoutMs)
+	@JvmStatic fun shouldSee(css: String, expected: String, timeoutMs: Double = 4000.0): UI =
+		see(css, expected, timeoutMs)
 
-	/** alias for shouldBeVisible */
+	/** alias for seeVisible */
 	@JvmOverloads
-	@JvmStatic fun seeVisible(css: String, timeoutMs: Long = 4000): UI =
-		shouldBeVisible(css, timeoutMs)
+	@JvmStatic fun shouldBeVisible(css: String, timeoutMs: Double = 4000.0): UI =
+		seeVisible(css, timeoutMs)
 
 	/** alias for shouldHaveCount */
 	@JvmStatic fun count(css: String, n: Int): UI = shouldHaveCount(css, n)
-
-
 
 	// ---------- Kotlin sugar (DSL-ish) ----------
 	data class Entering(val text: String)
 	@JvmStatic fun type(text: String) = Entering(text)
 
 	/** Kotlin: type("foo") into Sel.id("username") */
-	infix fun Entering.into(el: SelenideElement) =
-		step("""Type "$text" into $el""") { el.shouldBe(visible).setValue(text) }
+	infix fun Entering.into(locator: Locator) {
+		step("Type '$text' into locator") { locator.fill(text) }
+	}
 
-	/** Kotlin: Sel.css("button").clicks(Unit) */
-	infix fun SelenideElement.clicks(@Suppress("UNUSED_PARAMETER") unit: Unit) =
-		step("Click $this") { click() }
+	/** Kotlin: Sel.css("button") clicks Unit */
+	infix fun Locator.clicks(@Suppress("UNUSED_PARAMETER") unit: Unit) {
+		step("Click locator") { click() }
+	}
 
-	/** Kotlin: Sel.css("#toast").shouldHaveText("Welcome") */
-	infix fun SelenideElement.shouldHaveText(expected: String) =
-		step("""Expect "$expected" on $this""") { shouldHave(text(expected)) }
-
-
+	/** Kotlin: Sel.css("#toast") shouldHaveText "Welcome" */
+	infix fun Locator.shouldHaveText(expected: String) {
+		step("Expect locator contains '$expected'") { assertThat(this).containsText(expected) }
+	}
 
 	// ---------- Fluent (every method returns UI for chaining) ----------
-	@Step("Visit {url}")
-	@JvmStatic fun visit(url: String): UI = apply { open(url) }
+	@JvmStatic fun visit(url: String): UI = apply {
+		step("Visit $url") { PlaywrightSession.page().navigate(url) }
+	}
 
-	@Step("Home")
-	@JvmStatic fun home(): UI = apply { open("/") }
+	@JvmStatic fun home(): UI = apply {
+		step("Open Home") { PlaywrightSession.page().navigate("/") }
+	}
 
-	@Step("Click CSS {css}")
-	@JvmStatic fun clickCss(css: String): UI = apply { Sel.css(css).shouldBe(enabled).click() }
+	@JvmStatic fun tap(css: String): UI = apply {
+		step("Click CSS $css") { Sel.css(css).click() }
+	}
 
-	@Step("Click element")
-	@JvmStatic fun click(el: SelenideElement): UI = apply { el.shouldBe(enabled).click() }
+	@JvmStatic fun click(locator: Locator): UI = apply {
+		step("Click locator") { locator.click() }
+	}
 
-	@Step("Type '{value}' into CSS {css}")
-	@JvmStatic fun typeInto(css: String, value: String): UI =
-		apply { Sel.css(css).shouldBe(visible).setValue(value) }
-
-	@Step("Type '{value}' into element")
-	@JvmStatic fun typeInto(el: SelenideElement, value: String): UI =
-		apply { el.shouldBe(visible).setValue(value) }
-
-	@JvmOverloads
-	@Step("Expect CSS {css} contains '{expected}' (timeoutMs={timeoutMs})")
-	@JvmStatic fun shouldSee(css: String, expected: String, timeoutMs: Long = Configuration.timeout): UI =
-		apply { Sel.css(css).shouldHave(text(expected), Duration.ofMillis(timeoutMs)) }
-
-	@JvmOverloads
-	@Step("Expect text {text} visible anywhere in body: {text}")
-	@JvmStatic
-	fun shouldSeeText(text: String, timeoutMs: Long = Configuration.timeout): UI = apply {
-		// Only search within the BODY so we don’t accidentally match <title> etc. in HEAD
-		Sel.xpath("//body//*[contains(normalize-space(.), '$text')]")
-			.shouldBe(visible, Duration.ofMillis(timeoutMs))
+	@JvmStatic fun fill(css: String, value: String): UI = apply {
+		step("Type '$value' into CSS $css") { Sel.css(css).fill(value) }
 	}
 
 	@JvmOverloads
 	@JvmStatic
-	@Step("Expect text (ignore case): {text}")
-	fun shouldSeeTextIgnoreCase(text: String, timeoutMs: Long = Configuration.timeout): UI = apply {
-		val t = text.lowercase()
-		`$x`("//*[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '$t')]")
-			.shouldBe(visible, Duration.ofMillis(timeoutMs))
-	}
-
-	@JvmOverloads
-	@Step("Expect CSS {css} is visible (timeoutMs={timeoutMs})")
-	@JvmStatic fun shouldBeVisible(css: String, timeoutMs: Long = Configuration.timeout): UI =
-		apply { Sel.css(css).shouldBe(visible, Duration.ofMillis(timeoutMs)) }
-
-	@Step("Expect CSS {css} count = {count}")
-	@JvmStatic fun shouldHaveCount(css: String, count: Int): UI =
-		apply { Sel.all(css).shouldHave(size(count)) }
-
-	@Step("Expect CSS {css} count > {threshold}")
-	@JvmStatic fun shouldHaveCountGreaterThan(css: String, threshold: Int): UI =
-		apply { Sel.all(css).shouldHave(sizeGreaterThan(threshold)) }
-
-	@Step("Expect CSS {css} count <= {max}")
-	@JvmStatic fun shouldHaveCountAtMost(css: String, max: Int): UI =
-		apply { Sel.all(css).shouldHave(sizeLessThanOrEqual(max)) }
-
-	@Step("Expect CSS {css} count < {threshold}")
-	@JvmStatic fun shouldHaveCountLessThan(css: String, threshold: Int): UI =
-		apply { Sel.all(css).shouldHave(sizeLessThan(threshold)) }
-
-	@Step("Expect CSS {css} count >= {min}")
-	@JvmStatic fun shouldHaveCountAtLeast(css: String, min: Int): UI =
-		apply { Sel.all(css).shouldHave(sizeGreaterThanOrEqual(min)) }
-
-	@Step("Expect alert contains '{expected}' and accept")
-	@JvmStatic fun expectAlertContains(expected: String): UI = apply {
-		val a = switchTo().alert()
-		require(a.text.contains(expected, true)) {
-			"Alert text <${a.text}> did not contain <$expected>"
+	fun see(css: String, expected: String, timeoutMs: Double = 4000.0): UI = apply {
+		step("Expect CSS $css contains '$expected'") {
+			assertThat(Sel.css(css)).containsText(expected,
+				com.microsoft.playwright.assertions.LocatorAssertions.ContainsTextOptions().setTimeout(timeoutMs))
 		}
-		a.accept()
 	}
 
 	@JvmOverloads
 	@JvmStatic
-	@Step("Clear CSS {css}")
-	fun clear(css: String, timeoutMs: Long = Configuration.timeout): UI = apply {
-		Sel.css(css).shouldBe(visible, Duration.ofMillis(timeoutMs)).clear()
+	fun shouldSeeText(text: String, timeoutMs: Double = 4000.0): UI = apply {
+		step("Expect text visible in body: $text") {
+			assertThat(Sel.xpath("//body//*[contains(normalize-space(.), '$text')]"))
+				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+		}
 	}
 
 	@JvmOverloads
 	@JvmStatic
-	@Step("Clear element")
-	fun clear(el: SelenideElement, timeoutMs: Long = Configuration.timeout): UI = apply {
-		el.shouldBe(visible, Duration.ofMillis(timeoutMs)).clear()
+	fun shouldSeeTextIgnoreCase(text: String, timeoutMs: Double = 4000.0): UI = apply {
+		val t = text.lowercase()
+		step("Expect text visible (ignore case): $text") {
+			assertThat(Sel.xpath("//*[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '$t')]"))
+				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+		}
 	}
 
-	@Step("Scroll into view (center): {css}")
-	@JvmStatic fun scrollIntoView(css: String): UI = apply {
-		Sel.css(css).scrollIntoView("{behavior: \"instant\", block: \"center\", inline: \"center\"}")
+	@JvmOverloads
+	@JvmStatic
+	fun seeVisible(css: String, timeoutMs: Double = 4000.0): UI = apply {
+		step("Expect CSS $css visible") {
+			assertThat(Sel.css(css))
+				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+		}
 	}
 
-	@Step("Scroll element into view (center)")
-	@JvmStatic fun scrollIntoView(el: SelenideElement): UI = apply {
-		el.scrollIntoView("{behavior: \"instant\", block: \"center\", inline: \"center\"}")
+	@JvmStatic fun shouldHaveCount(css: String, count: Int): UI = apply {
+		step("Expect CSS $css count = $count") {
+			check(Sel.all(css).count() == count) { "Expected count=$count for '$css'" }
+		}
 	}
 
-	@Step("Click via JS: {css}")
+	@JvmStatic fun shouldHaveCountGreaterThan(css: String, threshold: Int): UI = apply {
+		step("Expect CSS $css count > $threshold") {
+			check(Sel.all(css).count() > threshold) { "Expected count>$threshold for '$css'" }
+		}
+	}
+
+	@JvmStatic fun shouldHaveCountAtMost(css: String, max: Int): UI = apply {
+		step("Expect CSS $css count <= $max") {
+			check(Sel.all(css).count() <= max) { "Expected count<=$max for '$css'" }
+		}
+	}
+
+	@JvmStatic fun shouldHaveCountLessThan(css: String, threshold: Int): UI = apply {
+		step("Expect CSS $css count < $threshold") {
+			check(Sel.all(css).count() < threshold) { "Expected count<$threshold for '$css'" }
+		}
+	}
+
+	@JvmStatic fun shouldHaveCountAtLeast(css: String, min: Int): UI = apply {
+		step("Expect CSS $css count >= $min") {
+			check(Sel.all(css).count() >= min) { "Expected count>=$min for '$css'" }
+		}
+	}
+
+	@JvmStatic
+	fun expectAlertContains(expected: String): UI = apply {
+		step("Expect alert contains '$expected'") {
+			val message = PlaywrightSession.lastDialogMessage()
+			require(!message.isNullOrBlank()) { "Expected browser alert, but none was captured" }
+			require(message.contains(expected, ignoreCase = true)) {
+				"Alert text <$message> did not contain <$expected>"
+			}
+		}
+	}
+
+	@JvmOverloads
+	@JvmStatic
+	fun clear(css: String, timeoutMs: Double = 4000.0): UI = apply {
+		step("Clear CSS $css") {
+			val locator = Sel.css(css)
+			assertThat(locator)
+				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+			locator.clear()
+		}
+	}
+
+	@JvmOverloads
+	@JvmStatic
+	fun clear(locator: Locator, timeoutMs: Double = 4000.0): UI = apply {
+		step("Clear locator") {
+			assertThat(locator)
+				.isVisible(com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions().setTimeout(timeoutMs))
+			locator.clear()
+		}
+	}
+
+	@JvmStatic
+	fun scrollIntoView(css: String): UI = apply {
+		step("Scroll into view: $css") { Sel.css(css).scrollIntoViewIfNeeded() }
+	}
+
+	@JvmStatic
+	fun scrollIntoView(locator: Locator): UI = apply {
+		step("Scroll locator into view") { locator.scrollIntoViewIfNeeded() }
+	}
+
 	@JvmStatic
 	fun clickCssJs(css: String): UI = apply {
-		Sel.css(css).shouldBe(enabled).click(ClickOptions.usingJavaScript())
-	}
-
-
-
-	// ----- tiny step wrapper with failure artifacts -----
-	private inline fun <T> step(name: String, crossinline body: () -> T): T {
-		return try {
-			AllureExtensions.step(name) { body() }
-		} catch (t: Throwable) {
-			// Take Screenot and attach Page Source on failure
-			attachFailureArtifacts()
-			throw t
+		step("Click via JS: $css") {
+			val locator = Sel.css(css)
+			locator.evaluate("el => el.click()")
 		}
 	}
 
-	// ----- failure artifacts helper -----
-	private fun attachFailureArtifacts() {
-
-		// Capture the page source
-		runCatching {
-			Screenshots.takeScreenShotAsFile()
-				?.inputStream()?.use {
-					Allure.addAttachment("Screenshot", "image/png", it, "png")
-				}
-		}.onFailure { log.error(it) { "Failed to capture screenshot" } }
-
-		// Capture the page source
-		runCatching {
-			val html = WebDriverRunner.getWebDriver().pageSource
-			Allure.addAttachment("Page Source", "text/html", html, ".html")
-		}.onFailure { log.error(it) { "Failed to capture pageSource" } }
-	}
+	private inline fun <T> step(name: String, crossinline body: () -> T): T =
+		AllureExtensions.step(name) { body() }
 }

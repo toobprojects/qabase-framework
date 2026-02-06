@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <name>QABase Framework [POM]</name>
     <description>
-        QABase is a lightweight, modular JVM automation testing framework (JUnit 5 + Allure, RestAssured, Selenide) for
+        QABase is a lightweight, modular JVM automation testing framework (JUnit 5 + Allure, RestAssured, Playwright) for
         rapid, standardized QA setups.
     </description>
     <url>https://github.com/toobprojects/qabase-framework</url>
@@ -72,7 +72,7 @@
         <rest-assured.version>5.5.6</rest-assured.version>
         <kotlinx-serialization-json.version>1.8.0</kotlinx-serialization-json.version>
         <aspectj.version>1.9.22.1</aspectj.version>
-        <selenide.version>7.9.4</selenide.version>
+        <playwright.version>1.55.0</playwright.version>
         <allure.version>2.29.0</allure.version>
         <allure.report.version>2.34.1</allure.report.version>
         <allure-maven.version>2.15.2</allure-maven.version>
@@ -103,9 +103,6 @@
         <allure.results.dir>${project.build.directory}/allure-results</allure.results.dir>
         <allure.report.dir>${project.build.directory}/allure-reports</allure.report.dir>
         <allure.home.dir>${project.build.directory}/.allure</allure.home.dir>
-        <selenide.reports.dir>${project.build.directory}/selenide-reports</selenide.reports.dir>
-        <selenide.downloads.dir>${project.build.directory}/downloads</selenide.downloads.dir>
-        <selenide.headless>true</selenide.headless>
         <allure.reports.enabled>false</allure.reports.enabled>
 
         <!-- Always-on agent(s) -->
@@ -237,16 +234,11 @@
                 <version>${kotlinx-serialization-json.version}</version>
             </dependency>
 
-            <!-- SELENIDE -->
+            <!-- PLAYWRIGHT -->
             <dependency>
-                <groupId>com.codeborne</groupId>
-                <artifactId>selenide</artifactId>
-                <version>${selenide.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-selenide</artifactId>
-                <version>${allure.version}</version>
+                <groupId>com.microsoft.playwright</groupId>
+                <artifactId>playwright</artifactId>
+                <version>${playwright.version}</version>
             </dependency>
 
             <!-- Kotlin Logging ( Kotlin wrapper for SLF4J ) -->
@@ -360,7 +352,7 @@
 
             <!--
                 Maven Surefire Plugin with Allure
-                •	Enables AspectJ weaving (needed for AOP or libraries like Selenide).
+                •	Enables AspectJ weaving for Allure step instrumentation.
                 •	Configures Allure for reporting test results.
             -->
             <plugin>
@@ -388,9 +380,6 @@
                             ${qabase.junit.extensions.autodetection.enabled}
                         </junit.jupiter.extensions.autodetection.enabled>
                         <allure.results.directory>${allure.results.dir}</allure.results.directory>
-                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
-                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
-                        <selenide.headless>${selenide.headless}</selenide.headless>
                     </systemPropertyVariables>
 
                     <includes>
@@ -451,9 +440,6 @@
                             ${qabase.junit.extensions.autodetection.enabled}
                         </junit.jupiter.extensions.autodetection.enabled>
                         <allure.results.directory>${allure.results.dir}</allure.results.directory>
-                        <selenide.reportsFolder>${selenide.reports.dir}</selenide.reportsFolder>
-                        <selenide.downloadsFolder>${selenide.downloads.dir}</selenide.downloadsFolder>
-                        <selenide.headless>${selenide.headless}</selenide.headless>
                     </systemPropertyVariables>
 
                     <!-- Adjust patterns if you use different IT naming -->

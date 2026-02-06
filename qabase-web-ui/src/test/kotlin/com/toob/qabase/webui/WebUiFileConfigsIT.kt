@@ -1,9 +1,10 @@
 package com.toob.qabase.webui
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.DisplayName
 import com.toob.qabase.core.util.logger
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 class WebUiConfigTest {
 
@@ -14,24 +15,25 @@ class WebUiConfigTest {
 	fun loadsYamlAndMaps() {
 		val cfg = loadWebUiConfig()
 
-		// Basic sanity: no null/blank critical fields
 		log.info {
-			"🌐 Loaded WebUI config: baseUrl='${cfg.baseUrl()}', browser='${cfg.browser()}', " +
-					"window='${cfg.browserWindowSize()}', timeout=${cfg.timeout()}, headless=${cfg.headless()} ✅"
+			"🌐 Loaded WebUI config: baseUrl='${cfg.baseUrl()}', browserType='${cfg.browserType()}', " +
+					"viewport='${cfg.viewportWidth()}x${cfg.viewportHeight()}', timeout=${cfg.timeoutMs()}, " +
+					"headless=${cfg.headless()}, traceOnFailure=${cfg.traceOnFailure()} ✅"
 		}
 
 		assertTrue(cfg.baseUrl().isNotBlank(), "baseUrl should not be blank")
-		assertTrue(cfg.browser().isNotBlank(), "browser should not be blank")
-		assertTrue(cfg.browserWindowSize().isNotBlank(), "browserWindowSize should not be blank")
-		assertTrue(cfg.timeout() > 0, "timeout should be > 0")
+		assertTrue(cfg.browserType().isNotBlank(), "browserType should not be blank")
+		assertTrue(cfg.viewportWidth() > 0, "viewportWidth should be > 0")
+		assertTrue(cfg.viewportHeight() > 0, "viewportHeight should be > 0")
+		assertTrue(cfg.timeoutMs() > 0, "timeoutMs should be > 0")
 
-		// If the repo ships a default demo config (DemoBlaze), validate those exact values
-		// Adjust these expectations if you change src/main/resources/application.yaml
 		assertEquals("https://www.demoblaze.com", cfg.baseUrl())
-		assertEquals("chrome", cfg.browser())
-		assertEquals("1920x1080", cfg.browserWindowSize())
-		assertEquals(10_000, cfg.timeout())
+		assertEquals("chromium", cfg.browserType())
+		assertEquals(1920, cfg.viewportWidth())
+		assertEquals(1080, cfg.viewportHeight())
+		assertEquals(10_000.0, cfg.timeoutMs())
 		assertTrue(cfg.headless())
+		assertTrue(cfg.traceOnFailure())
 	}
 
 	@Test
@@ -39,11 +41,14 @@ class WebUiConfigTest {
 	fun idempotentLoads() {
 		val a = loadWebUiConfig()
 		val b = loadWebUiConfig()
+
 		log.info { "🔁 Comparing two loads: a.baseUrl='${a.baseUrl()}' ↔ b.baseUrl='${b.baseUrl()}' 🧪" }
 		assertEquals(a.baseUrl(), b.baseUrl())
-		assertEquals(a.browser(), b.browser())
-		assertEquals(a.browserWindowSize(), b.browserWindowSize())
-		assertEquals(a.timeout(), b.timeout())
+		assertEquals(a.browserType(), b.browserType())
+		assertEquals(a.viewportWidth(), b.viewportWidth())
+		assertEquals(a.viewportHeight(), b.viewportHeight())
+		assertEquals(a.timeoutMs(), b.timeoutMs())
 		assertEquals(a.headless(), b.headless())
+		assertEquals(a.traceOnFailure(), b.traceOnFailure())
 	}
 }

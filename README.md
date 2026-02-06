@@ -12,7 +12,7 @@ A lightweight, modular **JVM test automation framework** that gets teams product
 ## Why QABase?
 
 - **Zero-to-valuable quickly** – sensible defaults and a clean project layout.
-- **Batteries included** – API testing with REST Assured, Web UI testing with Selenide, rich **Allure** reports.
+- **Batteries included** – API testing with REST Assured, Web UI testing with Playwright, rich **Allure** reports.
 - **Consistent across teams** – shared conventions and utilities reduce drift and review overhead.
 - **Kotlin-first, Java-friendly** – concise Kotlin with excellent Java interop.
 - **Multi-module** – pick what you need: Core, REST, or Web UI.
@@ -23,7 +23,7 @@ A lightweight, modular **JVM test automation framework** that gets teams product
 
 - **qabase-core** – test utilities, configuration, logging, reporting helpers shared by other modules.
 - **qabase-rest** – REST API test foundations built on **REST Assured** + Kotlin.
-- **qabase-web-ui** – Web UI test foundations built on **Selenide** (Selenium) with Allure integration.
+- **qabase-web-ui** – Web UI test foundations built on **Playwright for Java** with Allure integration.
 
 > Root coordinates (parent POM): `io.github.toobprojects:qabase-framework:2.0.0`
 
@@ -34,7 +34,7 @@ A lightweight, modular **JVM test automation framework** that gets teams product
 - **[Java 17+](docs.oracle.com/en/java/javase/17/migrate/significant-changes-jdk-release.html#GUID-561005C1-12BB-455C-AD41-00455CAD23A6)**, **Kotlin 2.x**
 - **JUnit 5**
 - **[REST Assured](https://rest-assured.io/)** (API testing)
-- **[Selenide](https://selenide.org/)** (Web UI testing)
+- **[Playwright for Java](https://playwright.dev/java/)** (Web UI testing)
 - **Kotlin Serialization**
 - **[Allure Reports](https://allurereport.org/)**
 

@@ -14,7 +14,7 @@
     <name>QABase Web UI</name>
     <description>
       Web UI automation module for the QABase Framework.
-      Provides a concise setup for browser-based testing using Selenide,
+      Provides a concise setup for browser-based testing using Playwright,
       with Allure reporting integration and shared utilities from QABase Core.
     </description>
     <packaging>jar</packaging>
@@ -52,14 +52,10 @@
             <artifactId>kotlin-test-junit5</artifactId>
         </dependency>
 
-        <!-- SELENIDE -->
+        <!-- PLAYWRIGHT -->
         <dependency>
-            <groupId>com.codeborne</groupId>
-            <artifactId>selenide</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-selenide</artifactId>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
         </dependency>
 
         <!-- APACHE COMMONS UTILS -->
