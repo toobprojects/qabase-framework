@@ -28,6 +28,14 @@ object PlaywrightSession {
 
 	fun lastDialogMessage(): String? = dialogsTl.get().lastOrNull()
 
+	fun consumeFirstMatchingDialogMessage(expected: String): String? {
+		val dialogs = dialogsTl.get()
+		val idx = dialogs.indexOfFirst { it.contains(expected, ignoreCase = true) }
+		return if (idx >= 0) dialogs.removeAt(idx) else null
+	}
+
+	fun dialogMessagesSnapshot(): List<String> = dialogsTl.get().toList()
+
 	fun clearPerTest() {
 		dialogsTl.get().clear()
 		pageTl.remove()

@@ -1,9 +1,11 @@
 package com.toob.qabase.webui.dsl
 
 import com.microsoft.playwright.Locator
+import com.microsoft.playwright.Page
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import com.toob.qabase.core.AllureExtensions
 import com.toob.qabase.webui.PlaywrightSession
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Minimal fluent DSL over Playwright:
@@ -150,10 +152,19 @@ object UI {
 	@JvmStatic
 	fun expectAlertContains(expected: String): UI = apply {
 		step("Expect alert contains '$expected'") {
-			val message = PlaywrightSession.lastDialogMessage()
-			require(!message.isNullOrBlank()) { "Expected browser alert, but none was captured" }
-			require(message.contains(expected, ignoreCase = true)) {
-				"Alert text <$message> did not contain <$expected>"
+			val timeoutMs = 5000L
+			val pollMs = 50L
+			val deadline = System.currentTimeMillis() + timeoutMs
+
+			var matchedMessage: String? = PlaywrightSession.consumeFirstMatchingDialogMessage(expected)
+			while (matchedMessage == null && System.currentTimeMillis() < deadline) {
+				Thread.sleep(pollMs)
+				matchedMessage = PlaywrightSession.consumeFirstMatchingDialogMessage(expected)
+			}
+
+			require(!matchedMessage.isNullOrBlank()) {
+				val seen = PlaywrightSession.dialogMessagesSnapshot()
+				"Expected browser alert containing <$expected>, but none was captured within ${timeoutMs}ms. Seen dialogs=$seen"
 			}
 		}
 	}
@@ -194,6 +205,34 @@ object UI {
 		step("Click via JS: $css") {
 			val locator = Sel.css(css)
 			locator.evaluate("el => el.click()")
+		}
+	}
+
+	@JvmOverloads
+	@JvmStatic
+	fun clickCssExpectingAlertContains(css: String, expected: String, timeoutMs: Double = 5000.0): UI = apply {
+		step("Click CSS $css and expect alert contains '$expected'") {
+			val page = PlaywrightSession.page()
+			val captured = AtomicReference<String?>()
+
+			page.onceDialog { dialog ->
+				val message = dialog.message()
+				captured.set(message)
+				PlaywrightSession.pushDialogMessage(message)
+				runCatching { dialog.accept() }
+			}
+
+			Sel.css(css).click()
+			page.waitForCondition(
+				{ captured.get() != null },
+				Page.WaitForConditionOptions().setTimeout(timeoutMs)
+			)
+
+			val message = captured.get()
+			require(!message.isNullOrBlank()) { "Expected browser alert, but none was captured after clicking '$css'" }
+			require(message.contains(expected, ignoreCase = true)) {
+				"Alert text <$message> did not contain <$expected>"
+			}
 		}
 	}
 

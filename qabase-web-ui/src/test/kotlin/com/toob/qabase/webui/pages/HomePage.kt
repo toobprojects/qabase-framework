@@ -17,7 +17,8 @@ class HomePage : VisiblePage<HomePage> {
 
 	@Step("Open product by id={id}")
 	fun openProductById(id: Int): ProductPage {
-		UI.clickCss("a[href='prod.html?idp_=$id']")
+		// Playwright strict mode requires a unique match; use the product title link only.
+		UI.clickCss("a.hrefch[href='prod.html?idp_=$id']")
 		return ProductPage()
 	}
 

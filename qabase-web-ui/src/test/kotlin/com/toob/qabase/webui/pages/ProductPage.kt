@@ -19,7 +19,7 @@ class ProductPage : VisiblePage<ProductPage> {
 
 	@Step("Add product to cart")
 	fun addToCart(): ProductPage {
-		UI.clickCss("a[onclick^='addToCart']")
+		UI.clickCssExpectingAlertContains("a[onclick^='addToCart']", "Product added")
 		return this
 	}
 

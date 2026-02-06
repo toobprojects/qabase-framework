@@ -21,9 +21,6 @@ class UiKotlinDslTestIT {
 		// fill the modal fields using the DSL sugar
 		UI.type("thabo") into Sel.id("loginusername")
 		UI.fill("#loginpassword", "secret")
-			.tap("#logInModal button[onclick='logIn()']")
-
-		// expect the site-level JS alert (no real account exists)
-		UI.expectAlertContains("Wrong password.")
+			.clickCssExpectingAlertContains("#logInModal button[onclick='logIn()']", "Wrong password.")
 	}
 }
