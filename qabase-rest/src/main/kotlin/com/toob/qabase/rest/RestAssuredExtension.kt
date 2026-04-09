@@ -4,7 +4,6 @@ import com.toob.qabase.rest.support.HttpSupport
 import io.restassured.RestAssured
 import io.restassured.config.HttpClientConfig
 import io.restassured.config.ObjectMapperConfig
-import io.restassured.http.ContentType
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -42,8 +41,21 @@ class RestAssuredExtension : BeforeAllCallback, AfterAllCallback {
 
 		// Set base URL on global and default request specification
 		RestAssured.baseURI = cfg.baseUrl()
-		val defaultSpec = RestAssured.given().contentType(ContentType.JSON)
-		RestAssured.requestSpecification = defaultSpec.baseUri(cfg.baseUrl())
+		val defaultSpec = RestAssured.given()
+			.baseUri(cfg.baseUrl())
+			.apply {
+				val headers = cfg.headers()
+				headers.contentType().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+					contentType(it)
+				}
+				headers.accept().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+					header(RestModuleConstants.ACCEPT, it)
+				}
+				headers.authorization().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+					header(RestModuleConstants.AUTHORIZATION, it)
+				}
+			}
+		RestAssured.requestSpecification = defaultSpec
 
     }
 

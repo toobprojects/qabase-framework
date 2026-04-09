@@ -3,10 +3,12 @@ package com.toob.qabase.rest
 import com.toob.qabase.core.config.ConfigLoader
 import io.smallrye.config.ConfigMapping
 import io.smallrye.config.WithDefault
+import io.smallrye.config.WithName
 import org.eclipse.microprofile.config.ConfigProvider
 import io.smallrye.config.SmallRyeConfig
 import io.smallrye.config.SmallRyeConfigBuilder
 import java.util.NoSuchElementException
+import java.util.Optional
 
 /**
  * Type-safe, DI-free config mapping for the "qabase.rest" prefix.
@@ -24,6 +26,17 @@ interface RestConfig {
     /** Base URL for REST calls. Example: https://api.example.com */
     @WithDefault("http://localhost:8080")
     fun baseUrl(): String
+
+	fun headers(): Headers
+
+	interface Headers {
+		@WithName("content-type")
+		fun contentType(): Optional<String>
+
+		fun accept(): Optional<String>
+
+		fun authorization(): Optional<String>
+	}
 }
 
 /**

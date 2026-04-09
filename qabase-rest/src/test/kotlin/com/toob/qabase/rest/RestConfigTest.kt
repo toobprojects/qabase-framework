@@ -7,6 +7,7 @@ import io.smallrye.config.common.MapBackedConfigSource
 import org.eclipse.microprofile.config.spi.ConfigSource
 import org.junit.jupiter.api.*
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class RestConfigTest {
 
@@ -41,6 +42,9 @@ class RestConfigTest {
 
 		val rc = loadRestConfig()
 		assertEquals("http://localhost:8080", rc.baseUrl())
+		assertFalse(rc.headers().contentType().isPresent)
+		assertFalse(rc.headers().accept().isPresent)
+		assertFalse(rc.headers().authorization().isPresent)
 	}
 
 	@Test
@@ -50,7 +54,12 @@ class RestConfigTest {
 			.withSources(
 				object :MapBackedConfigSource(
 					"test-overrides",
-					mapOf("qabase.rest.base-url" to "https://api.example.com"),
+					mapOf(
+						"qabase.rest.base-url" to "https://api.example.com",
+						"qabase.rest.headers.content-type" to "application/xml",
+						"qabase.rest.headers.accept" to "application/xml",
+						"qabase.rest.headers.authorization" to "Bearer override-token"
+					),
 					100
 				) {}
 			)
@@ -60,11 +69,17 @@ class RestConfigTest {
 
 		val rc = loadRestConfig()
 		assertEquals("https://api.example.com", rc.baseUrl())
+		assertEquals("application/xml", rc.headers().contentType().orElseThrow())
+		assertEquals("application/xml", rc.headers().accept().orElseThrow())
+		assertEquals("Bearer override-token", rc.headers().authorization().orElseThrow())
 	}
 
 	@Test
 	fun `Actual Config Values Are loaded!`() {
 		val rc = loadRestConfig()
 		assertEquals("https://jsonplaceholder.typicode.com", rc.baseUrl())
+		assertEquals("application/json", rc.headers().contentType().orElseThrow())
+		assertEquals("application/json", rc.headers().accept().orElseThrow())
+		assertEquals("Bearer some-token", rc.headers().authorization().orElseThrow())
 	}
 }

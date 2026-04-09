@@ -37,9 +37,11 @@ class RestAssuredExtensionTest {
 		val spec = RestAssured.requestSpecification as FilterableRequestSpecification
 		val ct = spec.contentType
 		assertTrue(
-			ct == ContentType.JSON.toString() || (ct != null && ct.startsWith("application/json")),
-			"Default request spec should use JSON content type"
+			ct == "application/json" || ct == ContentType.JSON.toString() || (ct != null && ct.startsWith("application/json")),
+			"Default request spec should use configured or default JSON content type"
 		)
+		assertEquals("application/json", spec.headers.getValue("Accept"))
+		assertEquals("Bearer some-token", spec.headers.getValue("Authorization"))
 
 		// New given() inherits base URI
 		val given = RestAssured.given() as FilterableRequestSpecification

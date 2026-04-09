@@ -1,9 +1,12 @@
 package com.toob.qabase.rest.client
 
 import com.toob.qabase.core.AllureExtensions.step
+import com.toob.qabase.rest.RestModuleConstants
+import com.toob.qabase.rest.loadRestConfig
 import com.toob.qabase.rest.support.HttpSupport
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
+import io.restassured.specification.FilterableRequestSpecification
 
 
 /**
@@ -43,6 +46,13 @@ object RestClient {
     fun get(endpoint: String, queryParams: Map<String, Any?>? = null): RestResponse =
         request(HTTP_GET, endpoint, queryParams = queryParams)
 
+	@JvmStatic
+	fun get(
+		endpoint: String,
+		queryParams: Map<String, Any?>? = null,
+		headers: Map<String, Any?>? = null
+	): RestResponse = request(HTTP_GET, endpoint, queryParams = queryParams, headers = headers)
+
     /**
      * Sends a HTTP POST request to the specified endpoint with a request body.
      *
@@ -53,6 +63,10 @@ object RestClient {
     @JvmStatic
     fun post(endpoint: String, body: Any): RestResponse =
         request(HTTP_POST, endpoint, body)
+
+	@JvmStatic
+	fun post(endpoint: String, body: Any, headers: Map<String, Any?>? = null): RestResponse =
+		request(HTTP_POST, endpoint, body = body, headers = headers)
 
     /**
      * Sends a HTTP PUT request to the specified endpoint with a request body.
@@ -65,6 +79,10 @@ object RestClient {
     fun put(endpoint: String, body: Any): RestResponse =
         request(HTTP_PUT, endpoint, body)
 
+	@JvmStatic
+	fun put(endpoint: String, body: Any, headers: Map<String, Any?>? = null): RestResponse =
+		request(HTTP_PUT, endpoint, body = body, headers = headers)
+
     /**
      * Sends a HTTP DELETE request to the specified endpoint.
      *
@@ -74,6 +92,10 @@ object RestClient {
     @JvmStatic
     fun delete(endpoint: String): RestResponse =
         request(DELETE, endpoint)
+
+	@JvmStatic
+	fun delete(endpoint: String, headers: Map<String, Any?>? = null): RestResponse =
+		request(DELETE, endpoint, headers = headers)
 
     /**
      * Sends an HTTP request with the specified method, endpoint, optional body, and optional query parameters.
@@ -89,24 +111,11 @@ object RestClient {
         method: String,
         endpoint: String,
         body: Any? = null,
-        queryParams: Map<String, Any?>? = null
+        queryParams: Map<String, Any?>? = null,
+		headers: Map<String, Any?>? = null
     ): RestResponse {
         val response = step("Sending HTTP [ $method ] request to -> ${endpoint}") {
-            RestAssured.given()
-                // Set the request content type to JSON
-                .contentType(ContentType.JSON)
-                .apply {
-                    // Apply query parameters if present
-                    queryParams?.let {
-                        queryParams(it)
-                    }
-                    // Attach request body if present and add it to Allure report
-                    body?.let {
-                        body(it)
-                        // Attach JSON Request to Allure Report
-                        HttpSupport.attachRequest(it)
-                    }
-                }
+            prepareRequest(body = body, queryParams = queryParams, headers = headers)
                 // Send the HTTP request
                 .`when`()
                 .request(method, endpoint)
@@ -118,4 +127,62 @@ object RestClient {
         }
         return RestResponse(response)
     }
+
+	internal fun prepareRequest(
+		body: Any? = null,
+		queryParams: Map<String, Any?>? = null,
+		headers: Map<String, Any?>? = null
+	): FilterableRequestSpecification {
+		val spec = RestAssured.given() as FilterableRequestSpecification
+		applyDefaultHeaders(spec, headers)
+		queryParams?.let { spec.queryParams(it) }
+		if (!hasHeader(spec, RestModuleConstants.CONTENT_TYPE)) {
+			spec.contentType(ContentType.JSON)
+		}
+		body?.let {
+			spec.body(it)
+			HttpSupport.attachRequest(it)
+		}
+		return spec
+	}
+
+	private fun applyDefaultHeaders(
+		spec: io.restassured.specification.RequestSpecification,
+		overrideHeaders: Map<String, Any?>?
+	) {
+		val cfgHeaders = loadRestConfig().headers()
+		val mergedHeaders = linkedMapOf<String, Any>()
+
+		cfgHeaders.contentType().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+			mergedHeaders[RestModuleConstants.CONTENT_TYPE] = it
+		}
+		cfgHeaders.accept().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+			mergedHeaders[RestModuleConstants.ACCEPT] = it
+		}
+		cfgHeaders.authorization().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+			mergedHeaders[RestModuleConstants.AUTHORIZATION] = it
+		}
+		overrideHeaders
+			.orEmpty()
+			.forEach { (name, value) ->
+				when (value) {
+					null -> Unit
+					is String -> if (value.isNotBlank()) mergedHeaders[name] = value
+					else -> mergedHeaders[name] = value
+				}
+			}
+
+		if (mergedHeaders.isNotEmpty()) {
+			spec.headers(mergedHeaders)
+		}
+	}
+
+	private fun hasHeader(
+		spec: io.restassured.specification.RequestSpecification,
+		headerName: String
+	): Boolean =
+		runCatching {
+			val filterable = spec as io.restassured.specification.FilterableRequestSpecification
+			filterable.headers.hasHeaderWithName(headerName)
+		}.getOrDefault(false)
 }

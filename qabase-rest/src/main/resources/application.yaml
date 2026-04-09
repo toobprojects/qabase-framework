@@ -5,3 +5,7 @@
 qabase:
   rest:
     base-url: "https://jsonplaceholder.typicode.com"
+    headers:
+      content-type: "application/json"
+      accept: "application/json"
+      authorization: "Bearer some-token"
