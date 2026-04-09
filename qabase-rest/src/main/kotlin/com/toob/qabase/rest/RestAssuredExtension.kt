@@ -44,14 +44,14 @@ class RestAssuredExtension : BeforeAllCallback, AfterAllCallback {
 		val defaultSpec = RestAssured.given()
 			.baseUri(cfg.baseUrl())
 			.apply {
-				val headers = cfg.headers()
-				headers.contentType().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+				val configuredHeaders = cfg.headers()
+				configuredHeaders.contentType().orElse(null)?.takeIf { it.isNotBlank() }?.let {
 					contentType(it)
 				}
-				headers.accept().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+				configuredHeaders.accept().orElse(null)?.takeIf { it.isNotBlank() }?.let {
 					header(RestModuleConstants.ACCEPT, it)
 				}
-				headers.authorization().orElse(null)?.takeIf { it.isNotBlank() }?.let {
+				configuredHeaders.authorization().orElse(null)?.takeIf { it.isNotBlank() }?.let {
 					header(RestModuleConstants.AUTHORIZATION, it)
 				}
 			}
