@@ -4,7 +4,6 @@ import com.toob.qabase.core.AllureExtensions.step
 import com.toob.qabase.rest.support.HttpSupport
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
-import io.restassured.response.Response
 
 
 /**
@@ -30,7 +29,7 @@ object RestClient {
      * @return The HTTP response from the server.
      */
     @JvmStatic
-    fun get(endpoint: String): Response =
+    fun get(endpoint: String): RestResponse =
         request(HTTP_GET, endpoint)
 
     /**
@@ -41,7 +40,7 @@ object RestClient {
      * @return The HTTP response from the server.
      */
     @JvmStatic
-    fun get(endpoint: String, queryParams: Map<String, Any?>? = null): Response =
+    fun get(endpoint: String, queryParams: Map<String, Any?>? = null): RestResponse =
         request(HTTP_GET, endpoint, queryParams = queryParams)
 
     /**
@@ -52,7 +51,7 @@ object RestClient {
      * @return The HTTP response from the server.
      */
     @JvmStatic
-    fun post(endpoint: String, body: Any): Response =
+    fun post(endpoint: String, body: Any): RestResponse =
         request(HTTP_POST, endpoint, body)
 
     /**
@@ -63,7 +62,7 @@ object RestClient {
      * @return The HTTP response from the server.
      */
     @JvmStatic
-    fun put(endpoint: String, body: Any): Response =
+    fun put(endpoint: String, body: Any): RestResponse =
         request(HTTP_PUT, endpoint, body)
 
     /**
@@ -73,7 +72,7 @@ object RestClient {
      * @return The HTTP response from the server.
      */
     @JvmStatic
-    fun delete(endpoint: String): Response =
+    fun delete(endpoint: String): RestResponse =
         request(DELETE, endpoint)
 
     /**
@@ -91,8 +90,8 @@ object RestClient {
         endpoint: String,
         body: Any? = null,
         queryParams: Map<String, Any?>? = null
-    ): Response {
-        return step("Sending HTTP [ $method ] request to -> ${endpoint}") {
+    ): RestResponse {
+        val response = step("Sending HTTP [ $method ] request to -> ${endpoint}") {
             RestAssured.given()
                 // Set the request content type to JSON
                 .contentType(ContentType.JSON)
@@ -117,5 +116,6 @@ object RestClient {
                     HttpSupport.attachResponse(this)
                 }
         }
+        return RestResponse(response)
     }
 }
